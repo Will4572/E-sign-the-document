@@ -16,43 +16,43 @@ st.set_page_config(page_title="Digital Signature System", page_icon="🎓", layo
 
 # --- JAVASCRIPT HACK (QUAN TRỌNG NHẤT) ---
 # Đoạn mã này sẽ can thiệp trực tiếp vào DOM để xóa bỏ dấu ...
-# --- JAVASCRIPT HACK (FIX GIAO DIỆN SÁNG/TỐI) ---
-# Đoạn mã này ép buộc hộp chọn luôn có Nền Trắng - Chữ Đen để dễ đọc
+# --- JAVASCRIPT HACK (FIX LỖI CHỮ TRẮNG) ---
 js_hack = """
 <script>
 function fixSelectBox() {
-    // 1. CHỈNH SỬA CHỮ (Luôn là màu đen đậm)
-    const elements = window.parent.document.querySelectorAll('div[data-baseweb="select"] span');
-    elements.forEach(function(el) {
-        el.style.whiteSpace = "normal"; 
-        el.style.overflow = "visible";  
-        el.style.textOverflow = "clip"; 
-        el.style.height = "auto";
-        el.style.display = "block";
-        el.style.lineHeight = "1.5";
-        el.style.fontWeight = "bold";
-        el.style.fontSize = "16px";
-        el.style.color = "#333333"; // Màu xám đen (dễ đọc hơn đen tuyền)
-    });
+    // Tìm tất cả các hộp chọn (Dropdown)
+    const targets = window.parent.document.querySelectorAll('div[data-baseweb="select"]');
     
-    // 2. CHỈNH SỬA HỘP BAO NGOÀI (Luôn là nền trắng, viền xanh)
-    const boxes = window.parent.document.querySelectorAll('div[data-baseweb="select"] > div');
-    boxes.forEach(function(box) {
-        box.style.height = "auto";
-        box.style.minHeight = "60px";
-        box.style.alignItems = "center";
-        box.style.backgroundColor = "#ffffff"; // Nền luôn trắng
-        box.style.border = "2px solid #003366"; // Viền xanh đậm của trường
-        box.style.borderRadius = "8px"; // Bo tròn góc
-    });
-    
-    // 3. XỬ LÝ MÀU ICON MŨI TÊN (Chuyển sang đen)
-    const svgs = window.parent.document.querySelectorAll('div[data-baseweb="select"] svg');
-    svgs.forEach(function(svg) {
-        svg.style.color = "#003366"; 
+    targets.forEach(function(target) {
+        // 1. ÉP NỀN HỘP MÀU TRẮNG
+        const box = target.querySelector('div');
+        if (box) {
+            box.style.backgroundColor = "#ffffff";
+            box.style.borderColor = "#003366"; 
+            box.style.borderWidth = "2px";
+        }
+        
+        // 2. ÉP TẤT CẢ CHỮ BÊN TRONG THÀNH MÀU ĐEN TUYỀN (QUAN TRỌNG)
+        // Quét tất cả thẻ div, span bên trong hộp đó
+        const textItems = target.querySelectorAll('div, span');
+        textItems.forEach(function(el) {
+            // Dùng setProperty với 'important' để bắt buộc đổi màu
+            el.style.setProperty('color', '#000000', 'important');
+            el.style.fontWeight = "bold";
+            
+            // Đảm bảo chữ hiển thị đầy đủ
+            el.style.whiteSpace = "normal";
+        });
+        
+        // 3. ĐỔI MÀU MŨI TÊN SANG XANH ĐẬM
+        const svgs = target.querySelectorAll('svg');
+        svgs.forEach(function(svg) {
+            svg.style.setProperty('fill', '#003366', 'important');
+            svg.style.setProperty('color', '#003366', 'important');
+        });
     });
 }
-// Chạy liên tục để đảm bảo luôn fix được khi reload
+// Chạy liên tục để luôn giữ màu đen
 setInterval(fixSelectBox, 500);
 </script>
 """
@@ -311,4 +311,5 @@ def main():
 if __name__ == "__main__":
 
     main()
+
 
