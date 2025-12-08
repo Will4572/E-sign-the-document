@@ -16,7 +16,7 @@ SENDER_NAME = "德育護理健康學院"
 try:
     MY_PASSWORD = st.secrets["EMAIL_PASSWORD"]
 except:
-    MY_PASSWORD = "rymt qfhl zisg kxjq" 
+    MY_PASSWORD = "" 
 
 def send_email_with_pdf(to_email, pdf_path, student_name, student_id, lang_code='zh', is_admin=False):
     """
@@ -110,4 +110,5 @@ def send_email_with_pdf(to_email, pdf_path, student_name, student_id, lang_code=
         return True, "Success"
     except Exception as e:
         print(f"❌ Lỗi gửi email: {e}") 
+
         return False, str(e)
