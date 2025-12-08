@@ -150,7 +150,7 @@ def main():
         student_row = df[df['學號'] == clean_search_id]
         
         if student_row.empty:
-            st.error(f"❌ Không tìm thấy mã số / ID Not Found: {clean_search_id}")
+            st.error(f"❌ Sdutent ID Not Found: {clean_search_id}")
         else:
             st_data = student_row.iloc[0]
             nat_col = '國籍' if '國籍' in st_data else '籍國'
@@ -300,4 +300,5 @@ def main():
                 st.write("") 
 
 if __name__ == "__main__":
+
     main()
