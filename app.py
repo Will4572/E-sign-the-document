@@ -16,31 +16,40 @@ st.set_page_config(page_title="Digital Signature System", page_icon="🎓", layo
 
 # --- JAVASCRIPT HACK (QUAN TRỌNG NHẤT) ---
 # Đoạn mã này sẽ can thiệp trực tiếp vào DOM để xóa bỏ dấu ...
+# --- JAVASCRIPT HACK (FIX GIAO DIỆN SÁNG/TỐI) ---
+# Đoạn mã này ép buộc hộp chọn luôn có Nền Trắng - Chữ Đen để dễ đọc
 js_hack = """
 <script>
 function fixSelectBox() {
-    // Tìm tất cả các span trong dropdown
+    // 1. CHỈNH SỬA CHỮ (Luôn là màu đen đậm)
     const elements = window.parent.document.querySelectorAll('div[data-baseweb="select"] span');
     elements.forEach(function(el) {
-        el.style.whiteSpace = "normal"; // Cho phép xuống dòng
-        el.style.overflow = "visible";  // Hiển thị hết nội dung tràn
-        el.style.textOverflow = "clip"; // Tắt dấu ...
+        el.style.whiteSpace = "normal"; 
+        el.style.overflow = "visible";  
+        el.style.textOverflow = "clip"; 
         el.style.height = "auto";
         el.style.display = "block";
-        el.style.lineHeight = "1.4";
+        el.style.lineHeight = "1.5";
         el.style.fontWeight = "bold";
-        el.style.color = "#000";
+        el.style.fontSize = "16px";
+        el.style.color = "#333333"; // Màu xám đen (dễ đọc hơn đen tuyền)
     });
     
-    // Tìm hộp bao ngoài để tăng chiều cao tự động
+    // 2. CHỈNH SỬA HỘP BAO NGOÀI (Luôn là nền trắng, viền xanh)
     const boxes = window.parent.document.querySelectorAll('div[data-baseweb="select"] > div');
     boxes.forEach(function(box) {
         box.style.height = "auto";
         box.style.minHeight = "60px";
         box.style.alignItems = "center";
-        box.style.backgroundColor = "#fff9c4"; // Nền vàng
-        box.style.borderColor = "#fbc02d";
-        box.style.padding = "10px";
+        box.style.backgroundColor = "#ffffff"; // Nền luôn trắng
+        box.style.border = "2px solid #003366"; // Viền xanh đậm của trường
+        box.style.borderRadius = "8px"; // Bo tròn góc
+    });
+    
+    // 3. XỬ LÝ MÀU ICON MŨI TÊN (Chuyển sang đen)
+    const svgs = window.parent.document.querySelectorAll('div[data-baseweb="select"] svg');
+    svgs.forEach(function(svg) {
+        svg.style.color = "#003366"; 
     });
 }
 // Chạy liên tục để đảm bảo luôn fix được khi reload
@@ -302,3 +311,4 @@ def main():
 if __name__ == "__main__":
 
     main()
+
