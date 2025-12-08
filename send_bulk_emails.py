@@ -11,7 +11,7 @@ import config
 # --- CẤU HÌNH CHUNG ---
 EXCEL_FILE = "學生名單表格.xlsx"
 MY_EMAIL = "will181@gms.dyhu.edu.tw"
-MY_PASS = "rymt qfhl zisg kxjq" 
+MY_PASS = "" 
 SENDER_NAME = "德育護理健康學院"
 BASE_URL = "https://e-sign-the-documentgit-3yymtpgvvt5dovkzytrt7g.streamlit.app" 
 
@@ -144,3 +144,4 @@ if __name__ == "__main__":
     except Exception as e:
 
         print(f"Lỗi: {e}")
+
