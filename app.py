@@ -14,8 +14,6 @@ import streamlit.components.v1 as components
 # 1. Cấu hình trang
 st.set_page_config(page_title="Digital Signature System", page_icon="🎓", layout="centered")
 
-# --- JAVASCRIPT HACK (QUAN TRỌNG NHẤT) ---
-# Đoạn mã này sẽ can thiệp trực tiếp vào DOM để xóa bỏ dấu ...
 # --- JAVASCRIPT HACK (FIX LỖI CHỮ TRẮNG) ---
 js_hack = """
 <script>
@@ -309,7 +307,4 @@ def main():
                 st.write("") 
 
 if __name__ == "__main__":
-
     main()
-
-

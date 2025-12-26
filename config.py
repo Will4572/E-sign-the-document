@@ -70,7 +70,7 @@ EMAIL_TEMPLATES = {
     "id": { "subject": "Konfirmasi Penandatanganan", "body": "Halo {student_name}, Sistem telah menerima tanda tangan Anda." }
 }
 
-# --- 5. DỮ LIỆU CÁC VĂN BẢN (ĐÃ XÓA TIẾNG ANH Ở MENU) ---
+# --- 5. DỮ LIỆU CÁC VĂN BẢN ---
 COMMON_FIELDS = {
     "name_cn": {"zh": "學生中文姓名", "vi": "Tên tiếng Hoa", "id": "Nama Mandarin", "th": "ชื่อจีน"},
     "name_en": {"zh": "學生英文姓名", "vi": "Tên tiếng Anh", "id": "Nama Inggris",  "th": "ชื่ออังกฤษ"},
@@ -78,8 +78,9 @@ COMMON_FIELDS = {
     "dept":    {"zh": "就讀學系",     "vi": "Khoa",          "id": "Jurusan",       "th": "คณะ"}
 }
 
+# === ĐÂY LÀ PHẦN QUAN TRỌNG: GỘP TẤT CẢ VÀO MỘT BIẾN DOCUMENTS ===
 DOCUMENTS = {
-    # === DOC 1 ===
+    # === DOC 1: NHẬP HỌC ===
     "admission": {
         "menu_names": {
             "zh": "1. 就讀承諾書",
@@ -109,7 +110,7 @@ DOCUMENTS = {
         ]
     },
 
-    # === DOC 2 ===
+    # === DOC 2: LÀM THÊM ===
     "work_study": {
         "menu_names": {
             "zh": "2. 工讀須知切結書",
@@ -135,6 +136,84 @@ DOCUMENTS = {
             { "id": "w3", "zh": "3. 我知道在學期上課期間，每個星期可以工讀的時數上限是20個小時。", "vi": "3. Tôi biết rằng trong thời gian học kỳ, thời gian làm thêm tối đa là 20 GIỜ mỗi tuần.", "id": "3. Saya tahu bahwa selama semester perkuliahan, batas waktu kerja paruh waktu adalah 20 JAM per minggu.", "th": "3. ข้าพเจ้าทราบว่าในระหว่างภาคการศึกษา ชั่วโมงทำงานพาร์ทไทม์สูงสุดคือ 20 ชั่วโมงต่อสัปดาห์" },
             { "id": "w4", "zh": "4. 我知道在學期期間如果超時工讀，經過查報屬實，我會被政府罰款台幣3萬元以上，15萬元以下。我的雇主會被罰款台幣15萬元以上，75萬元以下。我也會失去領取校內獎助學金的資格，而且已經領取的獎助學金必須全部繳回。", "vi": "4. Tôi biết nếu làm quá giờ quy định, tôi sẽ bị phạt từ 30.000 đến 150.000 Đài tệ. Chủ thuê sẽ bị phạt từ 150.000 đến 750.000 Đài tệ. Tôi cũng sẽ mất tư cách nhận học bổng và phải hoàn trả học bổng đã nhận.", "id": "4. Saya tahu jika bekerja melebihi batas waktu, saya akan didenda 30.000-150.000 NTD. Majikan akan didenda 150.000-750.000 NTD. Saya juga akan kehilangan beasiswa dan wajib mengembalikan beasiswa yang telah diterima.", "th": "4. ข้าพเจ้าทราบว่าหากทำงานเกินเวลา จะถูกปรับ 30,000-150,000 TWD นายจ้างถูกปรับ 150,000-750,000 TWD ข้าพเจ้าจะหมดสิทธิ์รับทุนการศึกษาและต้องคืนทุนที่ได้รับไปแล้วทั้งหมด" },
             { "id": "w5", "zh": "我已經充分理解以上工讀相關規定。我在尋找工讀機會時，我會維護自身權益，並且遵守相關法令規範。", "vi": "Tôi đã hiểu rõ các quy định trên. Khi tìm việc, tôi sẽ bảo vệ quyền lợi của mình và tuân thủ pháp luật.", "id": "Saya memahami sepenuhnya peraturan di atas. Saya akan menjaga hak saya dan mematuhi hukum saat mencari kerja.", "th": "ข้าพเจ้าเข้าใจกฎระเบียบข้างต้นอย่างครบถ้วน ข้าพเจ้าจะรักษาผลประโยชน์ของตนและปฏิบัติตามกฎหมายเมื่อหางานทำ" }
+        ]
+    },
+
+    # === DOC 3: PHÁP QUY (MỚI) ===
+    "regulations": {
+        "menu_names": {
+            "zh": "3. 法規宣導確認書",
+            "vi": "3. Xác nhận tuyên truyền pháp quy",
+            "th": "3. หนังสือยืนยันการรับทราบกฎระเบียบ",
+            "id": "3. Konfirmasi Sosialisasi Peraturan"
+        },
+        "header_title": {
+            "zh": "法規宣導確認簽署書",
+            "vi": "BẢN XÁC NHẬN ĐÃ ĐƯỢC PHỔ BIẾN QUY ĐỊNH PHÁP LUẬT",
+            "th": "หนังสือยืนยันการรับทราบการเผยแพร่กฎระเบียบ",
+            "id": "SURAT KONFIRMASI SOSIALISASI UNDANG-UNDANG DAN PERATURAN"
+        },
+        "body_intro": {
+            "zh": """
+            <b>宣導法規內容 (Nội dung phổ biến / Isi Sosialisasi / เนื้อหาการเผยแพร่):</b><br/><br/>
+            1. 本校學則宣導<br/>
+            2. 本校急難救助宣導<br/>
+            3. 法治教育宣導（就業服務法、勞動基準法、外國學生來台就學辦法、入出國及移民法）<br/>
+            4. 交通安全宣導<br/>
+            5. 教育部境外生諮詢單線宣導<br/>
+            6. 醫療資源說明及宣導<br/>
+            7. 兩性關係與性別平等宣導<br/>
+            8. 國際學生輔導辦法<br/>
+            """,
+            "vi": """
+            <b>Nội dung các quy định được nhà trường phổ biến:</b><br/>
+            1. Quy chế học vụ nhà trường.<br/>
+            2. Hỗ trợ khẩn cấp của nhà trường.<br/>
+            3. Giáo dục pháp luật (Luật Dịch vụ việc làm, Luật Lao động, Quy định sinh viên nước ngoài, Luật Nhập cư).<br/>
+            4. An toàn giao thông.<br/>
+            5. Đường dây nóng tư vấn sinh viên nước ngoài của Bộ Giáo dục.<br/>
+            6. Tài nguyên y tế.<br/>
+            7. Quan hệ giới tính và bình đẳng giới.<br/>
+            8. Quy định hỗ trợ sinh viên quốc tế.<br/>
+            """,
+            "id": """
+            <b>Isi peraturan yang disosialisasikan:</b><br/>
+            1. Peraturan Akademik Sekolah.<br/>
+            2. Bantuan Darurat Sekolah.<br/>
+            3. Pendidikan Hukum (UU Layanan Kerja, UU Standar Kerja, Peraturan Mahasiswa Asing, UU Imigrasi).<br/>
+            4. Keselamatan Lalu Lintas.<br/>
+            5. Hotline Konsultasi Mahasiswa Asing Kementerian Pendidikan.<br/>
+            6. Sumber Daya Medis.<br/>
+            7. Hubungan Gender dan Kesetaraan Gender.<br/>
+            8. Peraturan Bimbingan Mahasiswa Internasional.<br/>
+            """,
+            "th": """
+            <b>เนื้อหากฎระเบียบที่เผยแพร่:</b><br/>
+            1. ระเบียบวิชาการของโรงเรียน<br/>
+            2. การช่วยเหลือฉุกเฉินของโรงเรียน<br/>
+            3. กฎหมายศึกษา (พ.ร.บ. การจ้างงาน, พ.ร.บ. มาตรฐานแรงงาน, กฎระเบียบนักศึกษาต่างชาติ, กฎหมายเข้าเมือง)<br/>
+            4. ความปลอดภัยจราจร<br/>
+            5. สายด่วนปรึกษานักศึกษาต่างชาติกระทรวงศึกษาธิการ<br/>
+            6. ทรัพยากรทางการแพทย์<br/>
+            7. ความสัมพันธ์และความเท่าเทียมทางเพศ<br/>
+            8. ระเบียบการให้คำปรึกษานักศึกษานานาชาติ<br/>
+            """
+        },
+        "checkboxes": [
+            { 
+                "id": "r1", 
+                "zh": "1. 我已清楚了解外籍學生工讀每週不得超過20小時的規定，並充分理解相關的權利與義務，將確實遵守相關規定。", 
+                "vi": "1. Tôi đã hiểu rõ quy định sinh viên nước ngoài làm thêm không quá 20 giờ/tuần, hiểu rõ quyền lợi nghĩa vụ liên quan và sẽ tuân thủ quy định.", 
+                "id": "1. Saya sudah mengerti aturan kerja paruh waktu maks 20 jam/minggu, memahami hak & kewajiban, serta akan mematuhinya.", 
+                "th": "1. ข้าพเจ้าเข้าใจกฎการทำงานพาร์ทไทม์ไม่เกิน 20 ชม./สัปดาห์ เข้าใจสิทธิหน้าที่ และจะปฏิบัติตามอย่างเคร่งครัด" 
+            },
+            { 
+                "id": "r2", 
+                "zh": "2. 我已了解這次宣導的法規內容，對於我的權利與義務有充分的說明，會理解應用及遵守相關規定。", 
+                "vi": "2. Tôi đã hiểu nội dung các quy định được phổ biến lần này, đã được giải thích đầy đủ về quyền và nghĩa vụ, tôi sẽ hiểu và tuân thủ.", 
+                "id": "2. Saya telah memahami isi peraturan yang disosialisasikan, mendapat penjelasan hak & kewajiban, serta akan mematuhinya.", 
+                "th": "2. ข้าพเจ้าเข้าใจเนื้อหากฎระเบียบที่เผยแพร่ ได้รับคำอธิบายสิทธิหน้าที่ครบถ้วน และจะปฏิบัติตามกฎระเบียบ" 
+            }
         ]
     }
 }

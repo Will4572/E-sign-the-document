@@ -11,9 +11,9 @@ import config
 # --- CẤU HÌNH CHUNG ---
 EXCEL_FILE = "學生名單表格.xlsx"
 MY_EMAIL = "will181@gms.dyhu.edu.tw"
-MY_PASS = "" 
+MY_PASS = "rymt qfhl zisg kxjq" 
 SENDER_NAME = "德育護理健康學院"
-BASE_URL = "https://e-sign-the-documentgit-3yymtpgvvt5dovkzytrt7g.streamlit.app" 
+BASE_URL = "https://e-sign-the-document-a3225vjbjqzbnzicnuskbh.streamlit.app" 
 
 # ==============================================================================
 # 👇 [CÔNG TẮC] BẠN MUỐN GỬI VĂN BẢN NÀO? SỬA SỐ Ở ĐÂY (1 HOẶC 2) 👇
@@ -87,7 +87,7 @@ def send_invitation(to_email, name_en, student_id, lang_code='zh'):
             
             <div style="text-align: center; margin: 30px 0;">
                 <a href="{personal_link}" style="background-color: #003366; color: white; padding: 15px 25px; text-decoration: none; border-radius: 5px; font-weight: bold; font-size: 16px; display: inline-block;">
-                    ✍️ 點擊簽署 / {text['btn_label']}
+                   ✍️ 點擊簽署 / {text['btn_label']}
                 </a>
             </div>
             
@@ -142,6 +142,4 @@ if __name__ == "__main__":
                 
         print("\n✅ HOÀN TẤT!")
     except Exception as e:
-
         print(f"Lỗi: {e}")
-

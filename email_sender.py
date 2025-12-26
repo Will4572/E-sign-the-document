@@ -12,34 +12,33 @@ import os
 MY_EMAIL = "will181@gms.dyhu.edu.tw" 
 SENDER_NAME = "德育護理健康學院"
 
-# Lấy mật khẩu từ secrets của Streamlit hoặc dùng trực tiếp (nếu chạy local)
+# Lấy mật khẩu
 try:
     MY_PASSWORD = st.secrets["EMAIL_PASSWORD"]
 except:
-    MY_PASSWORD = "" 
+    MY_PASSWORD = "rymt qfhl zisg kxjq" 
 
 def send_email_with_pdf(to_email, pdf_path, student_name, student_id, lang_code='zh', is_admin=False):
     """
-    Hàm này dùng để gửi email xác nhận KÈM FILE PDF sau khi học sinh ký xong trên Web.
+    Hàm này gửi email cho học sinh và TỰ ĐỘNG BCC (Gửi bản sao) cho Admin.
     """
     
-    # --- 1. CHẶN GỬI CHO ADMIN (Theo yêu cầu của bạn) ---
-    if is_admin:
-        return True 
-
-    # --- 2. XỬ LÝ GỬI CHO HỌC SINH ---
     msg = MIMEMultipart()
     msg['From'] = formataddr((SENDER_NAME, MY_EMAIL))
     msg['To'] = to_email
     
-    # --- TIÊU ĐỀ SONG NGỮ ---
-    # Lấy template từ config.py
+    # --- [QUAN TRỌNG] GỬI BẢN SAO CHO CHÍNH BẠN ---
+    # Dòng này giúp bạn nhận được file PDF vào Inbox của mình
+    msg['Bcc'] = MY_EMAIL 
+    
+    # --- TIÊU ĐỀ SONG NGỮ (THÊM MÃ SV ĐỂ DỄ LỌC) ---
     tmpl_zh = config.EMAIL_TEMPLATES['zh']
     tmpl_local = config.EMAIL_TEMPLATES.get(lang_code, config.EMAIL_TEMPLATES['zh'])
     
-    subject_final = tmpl_zh['subject']
+    subject_final = f"[{student_id}] {tmpl_zh['subject']}" # Thêm ID vào đầu tiêu đề
     if lang_code != 'zh':
         subject_final += f" / {tmpl_local['subject']}"
+    
     msg['Subject'] = subject_final
     
     # --- NỘI DUNG CHÀO HỎI ---
@@ -104,11 +103,13 @@ def send_email_with_pdf(to_email, pdf_path, student_name, student_id, lang_code=
             
         server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
         server.login(MY_EMAIL, MY_PASSWORD)
+        
+        # Gửi cho Học sinh (To) và Admin (Bcc)
         server.send_message(msg)
+        
         server.quit()
-        print(f"✅ Gửi thành công tới: {to_email}")
+        print(f"✅ Gửi thành công tới: {to_email} (và đã BCC cho Admin)")
         return True, "Success"
     except Exception as e:
         print(f"❌ Lỗi gửi email: {e}") 
-
         return False, str(e)

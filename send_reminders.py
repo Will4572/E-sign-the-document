@@ -11,9 +11,9 @@ import config
 # --- CẤU HÌNH ---
 EXCEL_FILE = "學生名單表格.xlsx"
 MY_EMAIL = "will181@gms.dyhu.edu.tw"
-MY_PASS = "" 
+MY_PASS = "rymt qfhl zisg kxjq" 
 SENDER_NAME = "德育護理健康學院"
-BASE_URL = "https://e-sign-the-document-a3225vjbjqzbnzicnuskbh.streamlit.app/" 
+BASE_URL = "https://dyhu181.streamlit.app/" 
 
 # --- NỘI DUNG TIẾNG TRUNG MỚI (BẠN ĐÃ SỬA) ---
 DOC_TITLE_ZH = "就讀國際專修部與產學專班切結書"
@@ -88,5 +88,4 @@ if __name__ == "__main__":
                 send_invitation(email, name, sid, lang)
                 time.sleep(2)
     except Exception as e:
-
         print(f"Lỗi: {e}")
