@@ -1,4 +1,3 @@
-# FILE: app.py
 import streamlit as st
 import pandas as pd
 import config
@@ -14,7 +13,7 @@ import streamlit.components.v1 as components
 # 1. Cấu hình trang
 st.set_page_config(page_title="Digital Signature System", page_icon="🎓", layout="centered")
 
-# --- JAVASCRIPT HACK (FIX LỖI CHỮ TRẮNG) ---
+# --- JAVASCRIPT HACK (PHIÊN BẢN MẠNH NHẤT - FIX LỖI CHỮ TRẮNG) ---
 js_hack = """
 <script>
 function fixSelectBox() {
@@ -56,14 +55,54 @@ setInterval(fixSelectBox, 500);
 """
 components.html(js_hack, height=0, width=0)
 
-# --- CSS TÙY CHỈNH ---
+# --- CSS TÙY CHỈNH (ẨN LOGO, AVATAR, MENU) ---
 custom_style = """
     <style>
-    #MainMenu {visibility: hidden;} footer {visibility: hidden;} header {visibility: hidden;}
+    /* 1. Ẩn Menu chính (3 dấu gạch ngang/chấm ở góc phải trên) */
+    #MainMenu {visibility: hidden;}
     
-    .stTextInput>div>div>input { text-align: center; font-size: 20px; font-weight: bold; border: 2px solid #003366; border-radius: 10px; }
+    /* 2. Ẩn Footer mặc định ("Made with Streamlit") */
+    footer {visibility: hidden;}
     
-    .stButton>button {width: 100%; border-radius: 8px; height: 3.5em; font-weight: bold; font-size: 18px; margin-top: 20px; background-color: #003366; color: white;}
+    /* 3. Ẩn thanh Header màu sắc ở trên cùng */
+    header {visibility: hidden;}
+    
+    /* 4. Ẩn Avatar và Toolbar của Streamlit Cloud (Góc phải dưới) */
+    div[data-testid="stToolbar"] {
+        visibility: hidden;
+        height: 0%;
+        position: fixed;
+    }
+    
+    /* 5. Ẩn các thành phần trang trí khác của Streamlit */
+    div[data-testid="stDecoration"] {
+        visibility: hidden;
+        height: 0%;
+        position: fixed;
+    }
+    div[data-testid="stStatusWidget"] {
+        visibility: hidden;
+    }
+
+    /* --- GIAO DIỆN CÁC NÚT NHẬP LIỆU --- */
+    .stTextInput>div>div>input { 
+        text-align: center; 
+        font-size: 20px; 
+        font-weight: bold; 
+        border: 2px solid #003366; 
+        border-radius: 10px; 
+    }
+    
+    .stButton>button {
+        width: 100%; 
+        border-radius: 8px; 
+        height: 3.5em; 
+        font-weight: bold; 
+        font-size: 18px; 
+        margin-top: 20px; 
+        background-color: #003366; 
+        color: white;
+    }
     .stButton>button:hover {background-color: #002244; color: #fff;}
 
     /* Căn giữa dòng nhắc nhập ID */
@@ -157,7 +196,7 @@ def main():
         student_row = df[df['學號'] == clean_search_id]
         
         if student_row.empty:
-            st.error(f"❌ Sdutent ID Not Found: {clean_search_id}")
+            st.error(f"❌ Student ID Not Found: {clean_search_id}")
         else:
             st_data = student_row.iloc[0]
             nat_col = '國籍' if '國籍' in st_data else '籍國'
@@ -207,7 +246,7 @@ def main():
 
                 st.markdown(f"<h4 style='text-align: center; margin-top: 20px; color: #b30000;'>{current_doc['header_title']['zh']}</h4>", unsafe_allow_html=True)
                 if lang_code != 'zh':
-                     st.markdown(f"<h6 style='text-align: center; color: #555;'>{current_doc['header_title'][lang_code]}</h6>", unsafe_allow_html=True)
+                      st.markdown(f"<h6 style='text-align: center; color: #555;'>{current_doc['header_title'][lang_code]}</h6>", unsafe_allow_html=True)
                 
                 with st.container(border=True):
                     st.caption(f"👤 {get_ui('student_info')}")
@@ -268,7 +307,8 @@ def main():
                                 img.save(sig_filename)
 
                                 safe_name = str(st_data['中文姓名']).replace(" ", "_")
-                                pdf_filename = f"{safe_name}_{student_id}_{selected_doc_key}.pdf"
+                                # --- ĐÃ CẬP NHẬT: SỐ HỌC SINH ĐỨNG TRƯỚC TÊN FILE ---
+                                pdf_filename = f"{student_id}_{safe_name}_{selected_doc_key}.pdf"
                                 full_pdf_path = os.path.join(folder_name, pdf_filename)
                                 
                                 create_pdf(full_pdf_path, st_data, checked_results, sig_filename, lang_code, current_doc)
