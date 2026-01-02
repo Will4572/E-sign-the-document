@@ -10,121 +10,84 @@ import time
 import sys
 import streamlit.components.v1 as components
 
-# 1. Cấu hình trang - Ẩn Sidebar ngay từ đầu
-st.set_page_config(page_title="Digital Signature System", page_icon="📜", layout="centered", initial_sidebar_state="collapsed")
+# 1. Cấu hình trang
+st.set_page_config(page_title="Digital Signature System", page_icon="📜", layout="centered")
 
-# --- JAVASCRIPT HACK (FIX MÀU DROPDOWN) ---
-js_hack = """
-<script>
-function fixSelectBox() {
-    const targets = window.parent.document.querySelectorAll('div[data-baseweb="select"]');
-    targets.forEach(function(target) {
-        const box = target.querySelector('div');
-        if (box) {
-            box.style.backgroundColor = "#fffdf0"; 
-            box.style.borderColor = "#D4AF37"; 
-            box.style.borderWidth = "2px";
-        }
-        const textItems = target.querySelectorAll('div, span');
-        textItems.forEach(function(el) {
-            el.style.setProperty('color', '#3d0c02', 'important'); 
-            el.style.fontWeight = "bold";
-        });
-        const svgs = target.querySelectorAll('svg');
-        svgs.forEach(function(svg) {
-            svg.style.setProperty('fill', '#b22222', 'important');
-        });
-    });
-
-    const popovers = window.parent.document.querySelectorAll('div[data-baseweb="popover"]');
-    popovers.forEach(function(pop) {
-        pop.style.setProperty('background-color', '#fffdf0', 'important');
-        pop.style.setProperty('border', '2px solid #D4AF37', 'important');
-        const options = pop.querySelectorAll('li, div');
-        options.forEach(function(opt) {
-            opt.style.setProperty('color', '#3d0c02', 'important');
-            opt.style.setProperty('background-color', '#fffdf0', 'important');
-            opt.style.fontWeight = "bold";
-        });
-    });
-    
-    // JS xóa Header mạnh tay
-    const header = document.querySelector('header');
-    if (header) header.style.display = 'none';
-    const footer = document.querySelector('footer');
-    if (footer) footer.style.display = 'none';
-}
-setInterval(fixSelectBox, 50);
-</script>
-"""
-components.html(js_hack, height=0, width=0)
-
-# --- CSS TÙY CHỈNH: GIAO DIỆN HOÀNG GIA & FIX MOBILE ---
+# --- CSS TÙY CHỈNH: GIAO DIỆN HOÀNG GIA VIP ---
 custom_style = """
     <style>
-    /* ================================================================= */
-    /* 1. KỸ THUẬT "KÉO MÀN HÌNH" ĐỂ CHE HEADER (MOBILE FIX) */
-    /* ================================================================= */
+    /* ============================================= */
+    /* 1. XỬ LÝ ẨN HEADER/AVATAR TRÊN ĐIỆN THOẠI     */
+    /* ============================================= */
     
-    /* Ẩn Header theo cách thông thường */
+    /* Ẩn Header trên mọi thiết bị */
     header[data-testid="stHeader"] {
-        visibility: hidden !important;
         display: none !important;
+        visibility: hidden !important;
     }
     
-    /* Ẩn Footer và Nút đỏ Hosted with Streamlit */
+    /* Ẩn Footer và Menu */
     footer {display: none !important;}
-    .viewerBadge_container__1QSob {display: none !important;}
-    div[data-testid="stStatusWidget"] {display: none !important;}
-
-    /* KỸ THUẬT QUAN TRỌNG: Kéo nội dung lên trên cùng để đè mất Header */
+    #MainMenu {display: none !important;}
+    div[data-testid="stToolbar"] {display: none !important;}
+    
+    /* Kéo nội dung lên sát mép trên cùng (Che khoảng trống của Header) */
     .block-container {
-        padding-top: 0rem !important; 
-        margin-top: -60px !important; /* Kéo ngược lên 60px để che khoảng trắng */
+        padding-top: 1rem !important; 
+        margin-top: -50px !important;
     }
     
-    /* Xử lý riêng cho Mobile: Kéo mạnh hơn */
+    /* Xử lý riêng cho màn hình nhỏ (Mobile) */
     @media (max-width: 640px) {
         .block-container {
             padding-top: 0rem !important;
-            margin-top: -80px !important; /* Kéo mạnh lên trên điện thoại */
+            margin-top: -70px !important; /* Kéo mạnh lên trên điện thoại */
         }
-        /* Ẩn thanh công cụ */
-        div[data-testid="stToolbar"] { display: none !important; }
-        header { display: none !important; }
+        /* Ẩn triệt để thanh công cụ mobile */
+        div[data-testid="stDecoration"] { display: none !important; }
+        header { display: none !important; opacity: 0 !important; }
     }
 
-    /* ================================================================= */
-    /* 2. GIAO DIỆN HOÀNG GIA (IMPERIAL STYLE) */
-    /* ================================================================= */
+    /* ============================================= */
+    /* 2. GIAO DIỆN HOÀNG GIA TRUNG HOA              */
+    /* ============================================= */
     
+    /* Nền Giấy Dó */
     .stApp {
         background-color: #fcf6e3;
         background-image: url("https://www.transparenttextures.com/patterns/rice-paper-3.png");
     }
 
+    /* Khung chính giữa */
     div.block-container {
         border: 5px double #8B0000;
         padding: 20px;
         border-radius: 15px;
         background-color: #ffffff;
         box-shadow: 0 10px 30px rgba(61, 12, 2, 0.4);
-        max-width: 700px;
     }
 
+    /* Font chữ tiêu đề */
     h1, h2, h3, h4 {
         font-family: 'Times New Roman', serif !important;
         color: #8B0000 !important;
         text-transform: uppercase;
         text-shadow: 1px 1px 0px #fff;
     }
+    
+    /* Chữ nội dung */
     p, label, span, div {
         color: #000000; 
         font-family: 'Times New Roman', serif;
         font-size: 1.1rem;
     }
 
-    /* Dropdown */
+    /* Dropdown Menu (Màu vàng kem - Fix lỗi đen) */
+    div[data-baseweb="select"] > div {
+        background-color: #fffdf0 !important;
+        border-color: #D4AF37 !important;
+        border-width: 2px !important;
+    }
     div[data-baseweb="popover"], div[data-baseweb="menu"], ul[role="listbox"] {
         background-color: #fffdf0 !important;
         border: 2px solid #D4AF37 !important;
@@ -140,7 +103,7 @@ custom_style = """
         color: #FFD700 !important;
     }
 
-    /* ID Prompt */
+    /* Khung nhập ID */
     .id-prompt-container {
         text-align: center;
         background: linear-gradient(180deg, #8B0000 0%, #5c0000 100%);
@@ -164,7 +127,7 @@ custom_style = """
         opacity: 0.9;
     }
 
-    /* Input ID */
+    /* Ô Input ID */
     .stTextInput>div>div>input { 
         text-align: center; font-size: 28px; font-weight: 900; 
         color: #b22222; 
@@ -174,7 +137,7 @@ custom_style = """
         background-color: #fffdf0;
     }
 
-    /* Button */
+    /* Nút Bấm */
     .stButton>button {
         width: 100%; border-radius: 8px; height: 4.5em; 
         font-weight: bold; font-size: 22px; 
@@ -187,7 +150,7 @@ custom_style = """
         background: #c92a2a; transform: translateY(3px); box-shadow: 0 2px 0 #4a0000; color: #fff;
     }
 
-    /* Canvas Container */
+    /* Khung Canvas Ký Tên */
     .signature-container {
         border: 3px double #b22222;
         background-color: #fff; padding: 5px;
@@ -196,8 +159,9 @@ custom_style = """
         width: 100%;
         box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
     }
+    div[data-testid="stCanvas"] canvas { width: 100% !important; }
 
-    /* Notifications */
+    /* Thông báo */
     .notify-error {
         position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 99999;
         padding: 30px; background: #fff; border: 4px solid #b22222; border-radius: 15px;
@@ -210,8 +174,6 @@ custom_style = """
         text-align: center; width: 320px; box-shadow: 0 0 50px rgba(255,215,0,0.5);
     }
     .success-text { color: #28a745 !important; font-size: 1.4rem; font-weight: bold; }
-    
-    div[data-testid="stCanvas"] canvas { width: 100% !important; }
     </style>
 """
 st.markdown(custom_style, unsafe_allow_html=True)
@@ -234,7 +196,7 @@ def main():
         
         text = MARQUEE_MSGS.get(lang_code, MARQUEE_MSGS['zh'])
         
-        # --- ÉP MÀU CHỮ VÀNG TƯƠI (#FFFF00) ---
+        # --- [QUAN TRỌNG] ÉP MÀU CHỮ VÀNG TẠI ĐÂY ---
         marquee_placeholder.markdown(f"""
         <style>
         .marquee-container {{
@@ -255,11 +217,12 @@ def main():
             font-family: 'Times New Roman', serif;
             letter-spacing: 1px;
         }}
+        /* ÉP MÀU VÀNG TUYỆT ĐỐI CHO CHỮ */
         .marquee-text-span {{
-            color: #FFFF00 !important; /* Vàng Chanh */
+            color: #FFFF00 !important; /* Vàng Chanh Rực Rỡ */
             font-size: 18px !important; 
             font-weight: 900 !important; 
-            text-shadow: 2px 2px 4px #000000 !important; 
+            text-shadow: 2px 2px 4px #000000 !important; /* Bóng đen làm nổi bật */
         }}
         @keyframes scroll-left {{ 0% {{ transform: translateX(0); }} 100% {{ transform: translateX(-100%); }} }}
         </style>
