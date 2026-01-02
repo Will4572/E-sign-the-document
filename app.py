@@ -10,10 +10,10 @@ import time
 import sys
 import streamlit.components.v1 as components
 
-# 1. Cấu hình trang
-st.set_page_config(page_title="Digital Signature System", page_icon="📜", layout="centered")
+# 1. Cấu hình trang - Ẩn Sidebar ngay từ đầu
+st.set_page_config(page_title="Digital Signature System", page_icon="📜", layout="centered", initial_sidebar_state="collapsed")
 
-# --- JAVASCRIPT HACK (FIX LỖI MÀU DROPDOWN) ---
+# --- JAVASCRIPT HACK (FIX MÀU DROPDOWN) ---
 js_hack = """
 <script>
 function fixSelectBox() {
@@ -47,6 +47,12 @@ function fixSelectBox() {
             opt.style.fontWeight = "bold";
         });
     });
+    
+    // JS xóa Header mạnh tay
+    const header = document.querySelector('header');
+    if (header) header.style.display = 'none';
+    const footer = document.querySelector('footer');
+    if (footer) footer.style.display = 'none';
 }
 setInterval(fixSelectBox, 50);
 </script>
@@ -57,55 +63,46 @@ components.html(js_hack, height=0, width=0)
 custom_style = """
     <style>
     /* ================================================================= */
-    /* 1. KHU VỰC ẨN THANH CÔNG CỤ (FIX CHO MOBILE) */
+    /* 1. KỸ THUẬT "KÉO MÀN HÌNH" ĐỂ CHE HEADER (MOBILE FIX) */
     /* ================================================================= */
     
-    /* Ẩn Header & Footer */
-    header {visibility: hidden !important; height: 0px !important;}
-    footer {display: none !important;}
-    #MainMenu {visibility: hidden !important; display: none !important;}
-    div[data-testid="stToolbar"] {display: none !important;}
-    div[data-testid="stDecoration"] {display: none !important;}
-    div[data-testid="stStatusWidget"] {display: none !important;}
-
-    /* KỸ THUẬT KÉO NGƯỢC LỀ (QUAN TRỌNG CHO MOBILE) */
-    /* Kéo toàn bộ nội dung lên trên cùng, đè mất thanh header của điện thoại */
-    .stApp > header {
+    /* Ẩn Header theo cách thông thường */
+    header[data-testid="stHeader"] {
+        visibility: hidden !important;
         display: none !important;
     }
     
-    /* Chỉnh lại padding cho khung chính để nó sát lên nóc màn hình điện thoại */
+    /* Ẩn Footer và Nút đỏ Hosted with Streamlit */
+    footer {display: none !important;}
+    .viewerBadge_container__1QSob {display: none !important;}
+    div[data-testid="stStatusWidget"] {display: none !important;}
+
+    /* KỸ THUẬT QUAN TRỌNG: Kéo nội dung lên trên cùng để đè mất Header */
     .block-container {
-        padding-top: 0px !important;
-        margin-top: 0px !important;
+        padding-top: 0rem !important; 
+        margin-top: -60px !important; /* Kéo ngược lên 60px để che khoảng trắng */
     }
     
-    /* Xử lý riêng cho màn hình nhỏ (Điện thoại) */
+    /* Xử lý riêng cho Mobile: Kéo mạnh hơn */
     @media (max-width: 640px) {
         .block-container {
-            padding-top: 10px !important; /* Chỉ chừa 1 chút xíu lề trên */
+            padding-top: 0rem !important;
+            margin-top: -80px !important; /* Kéo mạnh lên trên điện thoại */
         }
-        /* Ẩn nút 3 gạch (Hamburger) và Avatar trên mobile */
-        button[kind="header"] {
-            display: none !important;
-        }
-        div[data-testid="stHeader"] {
-            display: none !important;
-            height: 0 !important;
-        }
+        /* Ẩn thanh công cụ */
+        div[data-testid="stToolbar"] { display: none !important; }
+        header { display: none !important; }
     }
 
     /* ================================================================= */
     /* 2. GIAO DIỆN HOÀNG GIA (IMPERIAL STYLE) */
     /* ================================================================= */
     
-    /* Nền Giấy Dó */
     .stApp {
         background-color: #fcf6e3;
         background-image: url("https://www.transparenttextures.com/patterns/rice-paper-3.png");
     }
 
-    /* Khung chính giữa */
     div.block-container {
         border: 5px double #8B0000;
         padding: 20px;
@@ -115,7 +112,6 @@ custom_style = """
         max-width: 700px;
     }
 
-    /* Font chữ */
     h1, h2, h3, h4 {
         font-family: 'Times New Roman', serif !important;
         color: #8B0000 !important;
@@ -128,7 +124,7 @@ custom_style = """
         font-size: 1.1rem;
     }
 
-    /* Dropdown Menu (Màu vàng kem) */
+    /* Dropdown */
     div[data-baseweb="popover"], div[data-baseweb="menu"], ul[role="listbox"] {
         background-color: #fffdf0 !important;
         border: 2px solid #D4AF37 !important;
@@ -144,7 +140,7 @@ custom_style = """
         color: #FFD700 !important;
     }
 
-    /* Khung nhập ID */
+    /* ID Prompt */
     .id-prompt-container {
         text-align: center;
         background: linear-gradient(180deg, #8B0000 0%, #5c0000 100%);
@@ -168,7 +164,7 @@ custom_style = """
         opacity: 0.9;
     }
 
-    /* Ô Input ID */
+    /* Input ID */
     .stTextInput>div>div>input { 
         text-align: center; font-size: 28px; font-weight: 900; 
         color: #b22222; 
@@ -178,7 +174,7 @@ custom_style = """
         background-color: #fffdf0;
     }
 
-    /* Nút Bấm (Ấn Triện) */
+    /* Button */
     .stButton>button {
         width: 100%; border-radius: 8px; height: 4.5em; 
         font-weight: bold; font-size: 22px; 
@@ -191,7 +187,7 @@ custom_style = """
         background: #c92a2a; transform: translateY(3px); box-shadow: 0 2px 0 #4a0000; color: #fff;
     }
 
-    /* Khung Canvas Ký Tên */
+    /* Canvas Container */
     .signature-container {
         border: 3px double #b22222;
         background-color: #fff; padding: 5px;
@@ -201,7 +197,7 @@ custom_style = """
         box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
     }
 
-    /* Popup Thông báo */
+    /* Notifications */
     .notify-error {
         position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 99999;
         padding: 30px; background: #fff; border: 4px solid #b22222; border-radius: 15px;
