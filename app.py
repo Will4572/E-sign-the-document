@@ -13,35 +13,24 @@ import streamlit.components.v1 as components
 # 1. Cấu hình trang
 st.set_page_config(page_title="Digital Signature System", page_icon="🎓", layout="centered")
 
-# --- JAVASCRIPT HACK (PHIÊN BẢN MẠNH NHẤT - FIX LỖI CHỮ TRẮNG) ---
+# --- JAVASCRIPT HACK (FIX LỖI CHỮ TRẮNG) ---
 js_hack = """
 <script>
 function fixSelectBox() {
-    // Tìm tất cả các hộp chọn (Dropdown)
     const targets = window.parent.document.querySelectorAll('div[data-baseweb="select"]');
-    
     targets.forEach(function(target) {
-        // 1. ÉP NỀN HỘP MÀU TRẮNG
         const box = target.querySelector('div');
         if (box) {
             box.style.backgroundColor = "#ffffff";
             box.style.borderColor = "#003366"; 
             box.style.borderWidth = "2px";
         }
-        
-        // 2. ÉP TẤT CẢ CHỮ BÊN TRONG THÀNH MÀU ĐEN TUYỀN (QUAN TRỌNG)
-        // Quét tất cả thẻ div, span bên trong hộp đó
         const textItems = target.querySelectorAll('div, span');
         textItems.forEach(function(el) {
-            // Dùng setProperty với 'important' để bắt buộc đổi màu
             el.style.setProperty('color', '#000000', 'important');
             el.style.fontWeight = "bold";
-            
-            // Đảm bảo chữ hiển thị đầy đủ
             el.style.whiteSpace = "normal";
         });
-        
-        // 3. ĐỔI MÀU MŨI TÊN SANG XANH ĐẬM
         const svgs = target.querySelectorAll('svg');
         svgs.forEach(function(svg) {
             svg.style.setProperty('fill', '#003366', 'important');
@@ -49,83 +38,46 @@ function fixSelectBox() {
         });
     });
 }
-// Chạy liên tục để luôn giữ màu đen
 setInterval(fixSelectBox, 500);
 </script>
 """
 components.html(js_hack, height=0, width=0)
 
-# --- CSS TÙY CHỈNH (ẨN LOGO, AVATAR, MENU) ---
+# --- CSS TÙY CHỈNH ---
 custom_style = """
     <style>
-    /* 1. Ẩn Menu chính (3 dấu gạch ngang/chấm ở góc phải trên) */
     #MainMenu {visibility: hidden;}
-    
-    /* 2. Ẩn Footer mặc định ("Made with Streamlit") */
     footer {visibility: hidden;}
-    
-    /* 3. Ẩn thanh Header màu sắc ở trên cùng */
     header {visibility: hidden;}
-    
-    /* 4. Ẩn Avatar và Toolbar của Streamlit Cloud (Góc phải dưới) */
-    div[data-testid="stToolbar"] {
-        visibility: hidden;
-        height: 0%;
-        position: fixed;
-    }
-    
-    /* 5. Ẩn các thành phần trang trí khác của Streamlit */
-    div[data-testid="stDecoration"] {
-        visibility: hidden;
-        height: 0%;
-        position: fixed;
-    }
-    div[data-testid="stStatusWidget"] {
-        visibility: hidden;
-    }
+    div[data-testid="stToolbar"] {visibility: hidden; height: 0%; position: fixed;}
+    div[data-testid="stDecoration"] {visibility: hidden; height: 0%; position: fixed;}
+    div[data-testid="stStatusWidget"] {visibility: hidden;}
 
-    /* --- GIAO DIỆN CÁC NÚT NHẬP LIỆU --- */
     .stTextInput>div>div>input { 
-        text-align: center; 
-        font-size: 20px; 
-        font-weight: bold; 
-        border: 2px solid #003366; 
-        border-radius: 10px; 
+        text-align: center; font-size: 20px; font-weight: bold; 
+        border: 2px solid #003366; border-radius: 10px; 
     }
-    
     .stButton>button {
-        width: 100%; 
-        border-radius: 8px; 
-        height: 3.5em; 
-        font-weight: bold; 
-        font-size: 18px; 
-        margin-top: 20px; 
-        background-color: #003366; 
-        color: white;
+        width: 100%; border-radius: 8px; height: 3.5em; 
+        font-weight: bold; font-size: 18px; margin-top: 20px; 
+        background-color: #003366; color: white;
     }
     .stButton>button:hover {background-color: #002244; color: #fff;}
 
-    /* Căn giữa dòng nhắc nhập ID */
     .id-prompt {
         text-align: center; font-weight: bold; font-size: 1.2rem; 
         color: #004085; background-color: #cce5ff; 
         padding: 15px; border-radius: 10px; border: 2px solid #b8daff; margin-bottom: 20px;
     }
-
-    /* Welcome Box */
     .welcome-box {
         text-align: center; padding: 15px; border-radius: 10px; 
         background-color: #d4edda; border: 2px solid #c3e6cb;
-        color: #155724; margin-bottom: 20px; font-size: 1.1rem;
-        font-weight: bold;
+        color: #155724; margin-bottom: 20px; font-size: 1.1rem; font-weight: bold;
     }
-
-    /* Popup Thành công */
     .success-overlay {
         position: fixed; top: 0; left: 0; width: 100%; height: 100%;
         background: rgba(0, 0, 0, 0.7); z-index: 99998;
     }
-    
     .success-container {
         position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
         z-index: 99999; padding: 20px; border-radius: 15px;
@@ -133,15 +85,9 @@ custom_style = """
         width: 320px; background-color: #ffffff !important; border: 5px solid #28a745;
         animation: popUp 0.4s ease-out;
     }
-    
     .success-text { font-size: 1.2rem; font-weight: 900; color: #28a745 !important; margin: 10px 0; }
     .timer-text { font-size: 1rem; color: #333 !important; margin-top: 5px; font-weight: bold; }
-
-    @keyframes popUp { 
-        0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0; } 
-        100% { transform: translate(-50%, -50%) scale(1); opacity: 1; } 
-    }
-    
+    @keyframes popUp { 0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0; } 100% { transform: translate(-50%, -50%) scale(1); opacity: 1; } }
     .notify-error { 
         position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
         z-index: 99999; padding: 25px; border-radius: 15px;
@@ -157,6 +103,41 @@ def global_exception_handler(exctype, value, traceback):
 sys.excepthook = global_exception_handler
 
 def main():
+    # --- 1. TẠO KHUNG GIỮ CHỖ CHO HÀNG LED (Ở TRÊN CÙNG) ---
+    marquee_placeholder = st.empty()
+
+    # --- 2. HÀM CẬP NHẬT NỘI DUNG LED ---
+    def show_marquee(lang_code):
+        MARQUEE_MSGS = {
+            "zh": """📌 請注意： 學生完成簽名後，系統將自動寄送一份確認文件至 學生的電子郵件，同時另一份將保存於 學校系統。由於這是重要文件，所有資訊將依照學校規定進行 嚴格保密。""",
+            "vi": """📌 Chú ý: Sau khi ký xong, hệ thống sẽ gửi file xác nhận về email của bạn và lưu một bản sao tại trường. Mọi thông tin sẽ được bảo mật nghiêm ngặt theo quy định.""",
+            "th": """📌 หมายเหตุ: หลังจากลงนามเสร็จ ระบบจะส่งไฟล์ยืนยันไปที่อีเมลของคุณและบันทึกสำเนาไว้ที่โรงเรียน ข้อมูลทั้งหมดจะถูกเก็บเป็นความลับอย่างเคร่งครัด""",
+            "id": """📌 Perhatian: Setelah tanda tangan, sistem akan mengirim konfirmasi ke email Anda dan menyimpan salinannya di sekolah. Semua informasi dijaga kerahasiaannya dengan ketat."""
+        }
+        
+        text = MARQUEE_MSGS.get(lang_code, MARQUEE_MSGS['zh'])
+        
+        marquee_placeholder.markdown(f"""
+        <style>
+        .marquee-container {{
+            width: 100%; background-color: #003366; color: #FFD700; 
+            padding: 10px 0; white-space: nowrap; overflow: hidden;
+            box-sizing: border-box; border-bottom: 3px solid #FFD700;
+            margin-bottom: 20px; border-radius: 5px;
+        }}
+        .marquee-content {{
+            display: inline-block; padding-left: 100%;
+            animation: scroll-left 22s linear infinite;
+            font-size: 16px; font-weight: bold; line-height: 1.5;
+        }}
+        @keyframes scroll-left {{ 0% {{ transform: translateX(0); }} 100% {{ transform: translateX(-100%); }} }}
+        </style>
+        <div class="marquee-container"><div class="marquee-content">{text}</div></div>
+        """, unsafe_allow_html=True)
+
+    # Mặc định hiện tiếng Trung
+    show_marquee('zh')
+
     EXCEL_FILE = "學生名單表格.xlsx" 
     ADMIN_EMAIL = "will181@ems.dyhu.edu.tw"
 
@@ -203,6 +184,9 @@ def main():
             nationality_zh = st_data.get(nat_col, '台灣')
             lang_code = config.NATIONALITY_MAP.get(nationality_zh, 'zh')
             
+            # 👇 CẬP NHẬT LẠI HÀNG LED THEO NGÔN NGỮ SINH VIÊN 👇
+            show_marquee(lang_code)
+
             def get_ui(key): return f"{config.UI_LABELS[key]['zh']} / {config.UI_LABELS[key][lang_code]}"
 
             st.divider()
@@ -231,7 +215,6 @@ def main():
                 name_local = config.DOCUMENTS[key]['menu_names'][lang_code]
                 if lang_code == 'zh': return name_zh
                 else: 
-                    # Dùng ký tự đặc biệt để ép xuống dòng trong mọi trường hợp
                     return f"{name_zh}\n\n{name_local}"
 
             selected_doc_key = st.selectbox(
@@ -307,7 +290,6 @@ def main():
                                 img.save(sig_filename)
 
                                 safe_name = str(st_data['中文姓名']).replace(" ", "_")
-                                # --- ĐÃ CẬP NHẬT: SỐ HỌC SINH ĐỨNG TRƯỚC TÊN FILE ---
                                 pdf_filename = f"{student_id}_{safe_name}_{selected_doc_key}.pdf"
                                 full_pdf_path = os.path.join(folder_name, pdf_filename)
                                 
@@ -338,7 +320,6 @@ def main():
                                             with open(full_pdf_path, "rb") as f:
                                                 st.download_button(label=f"📥 {get_ui('download_btn')}", data=f, file_name=pdf_filename, mime="application/pdf")
                                     time.sleep(1)
-                                
                                 st.rerun()
                                 
                             except Exception as e:
