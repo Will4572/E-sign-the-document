@@ -13,7 +13,7 @@ import streamlit.components.v1 as components
 # 1. Cấu hình trang
 st.set_page_config(page_title="Digital Signature System", page_icon="📜", layout="centered")
 
-# --- JAVASCRIPT HACK (FIX LỖI DROPDOWN) ---
+# --- JAVASCRIPT HACK (FIX LỖI DROPDOWN NHÁY ĐEN & ÉP MÀU) ---
 js_hack = """
 <script>
 function fixSelectBox() {
@@ -22,17 +22,19 @@ function fixSelectBox() {
     targets.forEach(function(target) {
         const box = target.querySelector('div');
         if (box) {
-            box.style.backgroundColor = "#fffdf0"; 
-            box.style.borderColor = "#D4AF37"; 
+            box.style.backgroundColor = "#fffdf0"; /* Nền kem sáng */
+            box.style.borderColor = "#D4AF37"; /* Viền Vàng Kim */
             box.style.borderWidth = "2px";
         }
         
+        // Màu chữ bên trong hộp
         const textItems = target.querySelectorAll('div, span');
         textItems.forEach(function(el) {
-            el.style.setProperty('color', '#3d0c02', 'important'); 
+            el.style.setProperty('color', '#3d0c02', 'important'); /* Nâu đen */
             el.style.fontWeight = "bold";
         });
         
+        // Mũi tên đỏ
         const svgs = target.querySelectorAll('svg');
         svgs.forEach(function(svg) {
             svg.style.setProperty('fill', '#b22222', 'important');
@@ -42,9 +44,11 @@ function fixSelectBox() {
     // 2. CHỈNH DANH SÁCH XỔ XUỐNG (MENU POPUP) - FIX LỖI MÀU ĐEN
     const popovers = window.parent.document.querySelectorAll('div[data-baseweb="popover"]');
     popovers.forEach(function(pop) {
+        // Ép nền màu trắng kem ngay lập tức để không bị đen
         pop.style.setProperty('background-color', '#fffdf0', 'important');
         pop.style.setProperty('border', '2px solid #D4AF37', 'important');
         
+        // Ép các dòng chữ bên trong màu nâu
         const options = pop.querySelectorAll('li, div');
         options.forEach(function(opt) {
             opt.style.setProperty('color', '#3d0c02', 'important');
@@ -53,39 +57,74 @@ function fixSelectBox() {
         });
     });
 }
+// Chạy liên tục tốc độ cao để bắt kịp tốc độ mở menu
 setInterval(fixSelectBox, 50);
 </script>
 """
 components.html(js_hack, height=0, width=0)
 
-# --- CSS TÙY CHỈNH: GIAO DIỆN HOÀNG GIA ---
+# --- CSS TÙY CHỈNH: GIAO DIỆN HOÀNG GIA (ĐÃ FIX ẨN AVATAR MOBILE) ---
 custom_style = """
     <style>
-    #MainMenu {visibility: hidden;}
-    footer {visibility: hidden;}
-    header {visibility: hidden;}
-    div[data-testid="stToolbar"] {visibility: hidden;}
-    div[data-testid="stDecoration"] {visibility: hidden;}
-    div[data-testid="stStatusWidget"] {visibility: hidden;}
+    /* --- 1. ẨN TUYỆT ĐỐI CÁC THÀNH PHẦN CỦA STREAMLIT (CẢ MOBILE & PC) --- */
+    
+    /* Ẩn thanh Header trên cùng (Chứa Avatar/Hamburger Menu) */
+    header[data-testid="stHeader"] {
+        display: none !important;
+        visibility: hidden !important;
+        height: 0px !important;
+    }
+    
+    /* Ẩn Toolbar (Dấu 3 chấm, Avatar) */
+    div[data-testid="stToolbar"] {
+        display: none !important;
+        visibility: hidden !important;
+    }
+    
+    /* Ẩn các icon trang trí góc */
+    div[data-testid="stDecoration"] {
+        display: none !important;
+        visibility: hidden !important;
+    }
+    
+    /* Ẩn Footer "Made with Streamlit" */
+    footer {
+        display: none !important;
+        visibility: hidden !important;
+    }
+    
+    /* Ẩn thanh trạng thái (Running...) */
+    div[data-testid="stStatusWidget"] {
+        display: none !important;
+        visibility: hidden !important;
+    }
 
-    /* NỀN GIẤY CỔ */
+    /* Đẩy nội dung lên trên cùng vì đã mất Header */
+    .stApp > header {
+        display: none !important;
+    }
+    .main .block-container {
+        padding-top: 1rem !important; /* Kéo sát lên trên */
+    }
+
+    /* --- 2. NỀN GIẤY CỔ --- */
     .stApp {
         background-color: #fcf6e3;
         background-image: url("https://www.transparenttextures.com/patterns/rice-paper-3.png");
     }
 
-    /* KHUNG CHÍNH */
+    /* --- 3. KHUNG CHÍNH --- */
     div.block-container {
         border: 5px double #8B0000;
-        padding: 30px;
+        padding: 20px; /* Giảm padding để vừa điện thoại hơn */
         border-radius: 15px;
         background-color: #ffffff;
         box-shadow: 0 20px 50px rgba(61, 12, 2, 0.3);
         max-width: 700px;
-        margin-top: 20px;
+        margin-top: 10px;
     }
 
-    /* FONT CHỮ */
+    /* --- 4. TYPOGRAPHY --- */
     h1, h2, h3, h4 {
         font-family: 'Times New Roman', serif !important;
         color: #8B0000 !important;
@@ -98,7 +137,7 @@ custom_style = """
         font-size: 1.1rem;
     }
 
-    /* DROPDOWN MENU FIX */
+    /* --- 5. DROPDOWN MENU FIX --- */
     div[data-baseweb="popover"], div[data-baseweb="menu"], ul[role="listbox"] {
         background-color: #fffdf0 !important;
         border: 2px solid #D4AF37 !important;
@@ -114,7 +153,7 @@ custom_style = """
         color: #FFD700 !important;
     }
 
-    /* KHUNG NHẮC NHỞ ID */
+    /* --- 6. KHUNG NHẮC NHỞ ID --- */
     .id-prompt-container {
         text-align: center;
         background: linear-gradient(180deg, #8B0000 0%, #5c0000 100%);
@@ -138,7 +177,7 @@ custom_style = """
         opacity: 0.9;
     }
 
-    /* INPUT ID */
+    /* --- 7. INPUT ID --- */
     .stTextInput>div>div>input { 
         text-align: center; font-size: 28px; font-weight: 900; 
         color: #b22222; 
@@ -148,7 +187,7 @@ custom_style = """
         background-color: #fffdf0;
     }
 
-    /* NÚT BẤM */
+    /* --- 8. NÚT BẤM --- */
     .stButton>button {
         width: 100%; border-radius: 8px; height: 4.5em; 
         font-weight: bold; font-size: 22px; 
@@ -161,7 +200,7 @@ custom_style = """
         background: #c92a2a; transform: translateY(3px); box-shadow: 0 2px 0 #4a0000; color: #fff;
     }
 
-    /* KHUNG CHỨA CANVAS */
+    /* --- 9. KHUNG CHỨA CANVAS --- */
     .signature-container {
         border: 3px double #b22222;
         background-color: #fff; padding: 5px;
@@ -171,7 +210,7 @@ custom_style = """
         box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
     }
 
-    /* POPUP THÔNG BÁO */
+    /* --- 10. POPUP THÔNG BÁO --- */
     .notify-error {
         position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 99999;
         padding: 30px; background: #fff; border: 4px solid #b22222; border-radius: 15px;
@@ -208,8 +247,7 @@ def main():
         
         text = MARQUEE_MSGS.get(lang_code, MARQUEE_MSGS['zh'])
         
-        # --- [QUAN TRỌNG] ÉP MÀU CHỮ VÀNG TẠI ĐÂY ---
-        # Tôi dùng thẻ <span> với style trực tiếp để không gì có thể ghi đè được màu vàng
+        # --- ÉP MÀU CHỮ VÀNG TẠI ĐÂY ---
         marquee_placeholder.markdown(f"""
         <style>
         .marquee-container {{
@@ -230,12 +268,11 @@ def main():
             font-family: 'Times New Roman', serif;
             letter-spacing: 1px;
         }}
-        /* ÉP MÀU VÀNG TUYỆT ĐỐI */
         .marquee-text-span {{
-            color: #FFFF00 !important; /* Vàng Chanh Rực Rỡ */
+            color: #FFFF00 !important; /* Vàng Chanh */
             font-size: 18px !important; 
             font-weight: 900 !important; 
-            text-shadow: 2px 2px 4px #000000 !important; /* Bóng đen làm nổi bật */
+            text-shadow: 2px 2px 4px #000000 !important; 
         }}
         @keyframes scroll-left {{ 0% {{ transform: translateX(0); }} 100% {{ transform: translateX(-100%); }} }}
         </style>
