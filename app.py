@@ -13,7 +13,7 @@ import streamlit.components.v1 as components
 # 1. Cấu hình trang
 st.set_page_config(page_title="Digital Signature System", page_icon="📜", layout="centered")
 
-# --- JAVASCRIPT HACK (FIX LỖI MÀU DROPDOWN & INPUT) ---
+# --- JAVASCRIPT HACK (GIỮ NGUYÊN ĐỂ ÉP MÀU DROPDOWN) ---
 js_hack = """
 <script>
 function fixSelectBox() {
@@ -53,57 +53,61 @@ setInterval(fixSelectBox, 50);
 """
 components.html(js_hack, height=0, width=0)
 
-# --- CSS TÙY CHỈNH: GIAO DIỆN HOÀNG GIA (FIX MOBILE HEADER) ---
+# --- CSS TÙY CHỈNH: GIAO DIỆN HOÀNG GIA & ẨN LOGO MOBILE ---
 custom_style = """
     <style>
-    /* --- 1. ẨN TUYỆT ĐỐI HEADER/AVATAR TRÊN MỌI THIẾT BỊ --- */
+    /* ================================================================= */
+    /* 1. KHU VỰC CẤM ĐỊA - ẨN TUYỆT ĐỐI HEADER VÀ FOOTER TRÊN MOBILE */
+    /* ================================================================= */
     
-    /* Ẩn thanh Header trên cùng (Chứa Avatar/Hamburger Menu) */
+    /* Ẩn thanh Header (Chứa Avatar và Hamburger Menu) */
     header[data-testid="stHeader"] {
         display: none !important;
         visibility: hidden !important;
         height: 0px !important;
-        z-index: -1 !important;
+        opacity: 0 !important;
+        z-index: -9999 !important;
     }
     
-    /* Ẩn Toolbar (Dấu 3 chấm, Avatar) */
+    /* Ẩn thanh Toolbar (Dấu 3 chấm bên phải) */
     div[data-testid="stToolbar"] {
-        display: none !important;
-        visibility: hidden !important;
-    }
-    
-    /* Ẩn trang trí màu sắc trên cùng */
-    div[data-testid="stDecoration"] {
-        display: none !important;
-    }
-    
-    /* Ẩn Footer */
-    footer {
         display: none !important;
     }
 
-    /* Đẩy nội dung lên sát mép trên cùng (Vì đã mất Header) */
+    /* Ẩn Footer và cái nút đỏ "Hosted with Streamlit" */
+    footer {
+        display: none !important;
+        visibility: hidden !important;
+    }
+    div[class*="viewerBadge"] {
+        display: none !important; /* Dòng này giết chết cái nút đỏ */
+    }
+    
+    /* Đẩy nội dung lên sát mép trên cùng (Lấp khoảng trống của Header) */
     .main .block-container {
         padding-top: 1rem !important; 
         margin-top: 0 !important;
     }
 
-    /* Xử lý riêng cho Mobile để chắc chắn ẩn */
+    /* Quy tắc riêng cho màn hình nhỏ (Mobile) để chắc chắn ẩn */
     @media (max-width: 640px) {
-        header {
-            display: none !important;
-        }
-        .stApp {
-            margin-top: 0 !important;
-        }
+        header { display: none !important; }
+        .stApp { margin-top: 0 !important; }
+        /* Ẩn luôn thanh decoration màu cầu vồng của Streamlit */
+        div[data-testid="stDecoration"] { display: none !important; }
     }
 
-    /* --- 2. GIAO DIỆN HOÀNG GIA --- */
+    /* ================================================================= */
+    /* 2. GIAO DIỆN HOÀNG GIA (IMPERIAL STYLE) */
+    /* ================================================================= */
+    
+    /* Nền Giấy Dó */
     .stApp {
         background-color: #fcf6e3;
         background-image: url("https://www.transparenttextures.com/patterns/rice-paper-3.png");
     }
 
+    /* Khung chính giữa */
     div.block-container {
         border: 5px double #8B0000;
         padding: 20px;
@@ -113,6 +117,7 @@ custom_style = """
         max-width: 700px;
     }
 
+    /* Font chữ */
     h1, h2, h3, h4 {
         font-family: 'Times New Roman', serif !important;
         color: #8B0000 !important;
@@ -125,7 +130,7 @@ custom_style = """
         font-size: 1.1rem;
     }
 
-    /* DROPDOWN MENU */
+    /* Dropdown Menu (Màu vàng kem) */
     div[data-baseweb="popover"], div[data-baseweb="menu"], ul[role="listbox"] {
         background-color: #fffdf0 !important;
         border: 2px solid #D4AF37 !important;
@@ -141,7 +146,7 @@ custom_style = """
         color: #FFD700 !important;
     }
 
-    /* ID PROMPT */
+    /* Khung nhập ID */
     .id-prompt-container {
         text-align: center;
         background: linear-gradient(180deg, #8B0000 0%, #5c0000 100%);
@@ -165,7 +170,7 @@ custom_style = """
         opacity: 0.9;
     }
 
-    /* INPUT ID */
+    /* Ô Input ID */
     .stTextInput>div>div>input { 
         text-align: center; font-size: 28px; font-weight: 900; 
         color: #b22222; 
@@ -175,7 +180,7 @@ custom_style = """
         background-color: #fffdf0;
     }
 
-    /* BUTTON */
+    /* Nút Bấm (Ấn Triện) */
     .stButton>button {
         width: 100%; border-radius: 8px; height: 4.5em; 
         font-weight: bold; font-size: 22px; 
@@ -188,7 +193,7 @@ custom_style = """
         background: #c92a2a; transform: translateY(3px); box-shadow: 0 2px 0 #4a0000; color: #fff;
     }
 
-    /* CANVAS CONTAINER */
+    /* Khung Canvas Ký Tên */
     .signature-container {
         border: 3px double #b22222;
         background-color: #fff; padding: 5px;
@@ -198,7 +203,7 @@ custom_style = """
         box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
     }
 
-    /* NOTIFICATIONS */
+    /* Popup Thông báo */
     .notify-error {
         position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 99999;
         padding: 30px; background: #fff; border: 4px solid #b22222; border-radius: 15px;
@@ -257,7 +262,7 @@ def main():
             letter-spacing: 1px;
         }}
         .marquee-text-span {{
-            color: #FFFF00 !important; /* Vàng Tươi */
+            color: #FFFF00 !important; /* Vàng Chanh */
             font-size: 18px !important; 
             font-weight: 900 !important; 
             text-shadow: 2px 2px 4px #000000 !important; 
