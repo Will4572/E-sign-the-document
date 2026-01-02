@@ -13,7 +13,7 @@ import streamlit.components.v1 as components
 # 1. Cấu hình trang
 st.set_page_config(page_title="Digital Signature System", page_icon="📜", layout="centered")
 
-# --- JAVASCRIPT HACK (GIỮ NGUYÊN ĐỂ ÉP MÀU DROPDOWN) ---
+# --- JAVASCRIPT HACK (FIX LỖI MÀU DROPDOWN) ---
 js_hack = """
 <script>
 function fixSelectBox() {
@@ -53,48 +53,46 @@ setInterval(fixSelectBox, 50);
 """
 components.html(js_hack, height=0, width=0)
 
-# --- CSS TÙY CHỈNH: GIAO DIỆN HOÀNG GIA & ẨN LOGO MOBILE ---
+# --- CSS TÙY CHỈNH: GIAO DIỆN HOÀNG GIA & FIX MOBILE ---
 custom_style = """
     <style>
     /* ================================================================= */
-    /* 1. KHU VỰC CẤM ĐỊA - ẨN TUYỆT ĐỐI HEADER VÀ FOOTER TRÊN MOBILE */
+    /* 1. KHU VỰC ẨN THANH CÔNG CỤ (FIX CHO MOBILE) */
     /* ================================================================= */
     
-    /* Ẩn thanh Header (Chứa Avatar và Hamburger Menu) */
-    header[data-testid="stHeader"] {
+    /* Ẩn Header & Footer */
+    header {visibility: hidden !important; height: 0px !important;}
+    footer {display: none !important;}
+    #MainMenu {visibility: hidden !important; display: none !important;}
+    div[data-testid="stToolbar"] {display: none !important;}
+    div[data-testid="stDecoration"] {display: none !important;}
+    div[data-testid="stStatusWidget"] {display: none !important;}
+
+    /* KỸ THUẬT KÉO NGƯỢC LỀ (QUAN TRỌNG CHO MOBILE) */
+    /* Kéo toàn bộ nội dung lên trên cùng, đè mất thanh header của điện thoại */
+    .stApp > header {
         display: none !important;
-        visibility: hidden !important;
-        height: 0px !important;
-        opacity: 0 !important;
-        z-index: -9999 !important;
     }
     
-    /* Ẩn thanh Toolbar (Dấu 3 chấm bên phải) */
-    div[data-testid="stToolbar"] {
-        display: none !important;
-    }
-
-    /* Ẩn Footer và cái nút đỏ "Hosted with Streamlit" */
-    footer {
-        display: none !important;
-        visibility: hidden !important;
-    }
-    div[class*="viewerBadge"] {
-        display: none !important; /* Dòng này giết chết cái nút đỏ */
+    /* Chỉnh lại padding cho khung chính để nó sát lên nóc màn hình điện thoại */
+    .block-container {
+        padding-top: 0px !important;
+        margin-top: 0px !important;
     }
     
-    /* Đẩy nội dung lên sát mép trên cùng (Lấp khoảng trống của Header) */
-    .main .block-container {
-        padding-top: 1rem !important; 
-        margin-top: 0 !important;
-    }
-
-    /* Quy tắc riêng cho màn hình nhỏ (Mobile) để chắc chắn ẩn */
+    /* Xử lý riêng cho màn hình nhỏ (Điện thoại) */
     @media (max-width: 640px) {
-        header { display: none !important; }
-        .stApp { margin-top: 0 !important; }
-        /* Ẩn luôn thanh decoration màu cầu vồng của Streamlit */
-        div[data-testid="stDecoration"] { display: none !important; }
+        .block-container {
+            padding-top: 10px !important; /* Chỉ chừa 1 chút xíu lề trên */
+        }
+        /* Ẩn nút 3 gạch (Hamburger) và Avatar trên mobile */
+        button[kind="header"] {
+            display: none !important;
+        }
+        div[data-testid="stHeader"] {
+            display: none !important;
+            height: 0 !important;
+        }
     }
 
     /* ================================================================= */
