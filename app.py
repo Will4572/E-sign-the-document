@@ -11,30 +11,28 @@ import sys
 import streamlit.components.v1 as components
 
 # 1. Cấu hình trang
-st.set_page_config(page_title="Digital Signature System", page_icon="📜", layout="centered", initial_sidebar_state="collapsed")
+st.set_page_config(page_title="Digital Signature System", page_icon="📜", layout="centered")
 
-# --- JAVASCRIPT: HỖ TRỢ XÓA GIAO DIỆN THỪA ---
+# --- JAVASCRIPT: "SÁT THỦ" DIỆT LOGO & AVATAR (MẠNH NHẤT) ---
 js_hack = """
 <script>
-function cleanMobileUI() {
-    // Tìm và ẩn Header
+function killElements() {
+    // 1. GIẾT HEADER & AVATAR
     const header = window.parent.document.querySelector('header');
-    if (header) { 
-        header.style.opacity = '0'; 
-        header.style.pointerEvents = 'none';
-        header.style.height = '0px';
-        header.style.zIndex = '-1'; // Đẩy xuống dưới cùng
-    }
-    
-    // Tìm và ẩn Footer
-    const footer = window.parent.document.querySelector('footer');
-    if (footer) { footer.style.display = 'none'; }
-    
-    // Ẩn nút 3 gạch
-    const toolbar = window.parent.document.querySelector('.stAppToolbar');
-    if (toolbar) { toolbar.style.display = 'none'; }
+    if (header) { header.remove(); } // Lệnh remove() xóa vĩnh viễn khỏi trang web
 
-    // Fix màu Dropdown (Vàng kem)
+    // 2. GIẾT FOOTER & LOGO ĐỎ
+    const footer = window.parent.document.querySelector('footer');
+    if (footer) { footer.remove(); }
+    
+    const badges = window.parent.document.querySelectorAll('[class*="viewerBadge"]');
+    badges.forEach(el => el.remove()); // Xóa sạch nút đỏ
+
+    // 3. GIẾT TOOLBAR (Dấu 3 chấm)
+    const toolbar = window.parent.document.querySelector('.stAppToolbar');
+    if (toolbar) { toolbar.remove(); }
+    
+    // 4. FIX MÀU DROPDOWN (Giữ nguyên)
     const targets = window.parent.document.querySelectorAll('div[data-baseweb="select"]');
     targets.forEach(function(target) {
         const box = target.querySelector('div');
@@ -53,48 +51,51 @@ function cleanMobileUI() {
             svg.style.setProperty('fill', '#b22222', 'important');
         });
     });
+    
+    // Fix Menu xổ xuống
+    const popovers = window.parent.document.querySelectorAll('div[data-baseweb="popover"]');
+    popovers.forEach(function(pop) {
+        pop.style.setProperty('background-color', '#fffdf0', 'important');
+        pop.style.setProperty('border', '2px solid #D4AF37', 'important');
+        const options = pop.querySelectorAll('li, div');
+        options.forEach(function(opt) {
+            opt.style.setProperty('color', '#3d0c02', 'important');
+            opt.style.setProperty('background-color', '#fffdf0', 'important');
+            opt.style.fontWeight = "bold";
+        });
+    });
 }
-// Chạy liên tục để đè lại Streamlit
-setInterval(cleanMobileUI, 100);
+// Chạy liên tục mỗi 50ms để đảm bảo logo không bao giờ kịp hiện ra
+setInterval(killElements, 50);
 </script>
 """
 components.html(js_hack, height=0, width=0)
 
-# --- CSS TÙY CHỈNH: GIAO DIỆN HOÀNG GIA & FIX MOBILE ---
+# --- CSS TÙY CHỈNH: CÂN ĐỐI MÁY TÍNH & ĐIỆN THOẠI ---
 custom_style = """
     <style>
-    /* ================================================================= */
-    /* 1. ẨN THANH CÔNG CỤ (DÙNG KỸ THUẬT ĐẨY LỚP)                       */
-    /* ================================================================= */
-    
-    /* Làm tàng hình Header và đẩy nó xuống dưới nội dung chính */
-    header[data-testid="stHeader"] {
-        background: transparent !important;
-        visibility: hidden !important;
-        opacity: 0 !important;
-        pointer-events: none !important;
-        z-index: -1 !important; /* Chìm xuống dưới */
-    }
-    
-    /* Ẩn Footer và các thành phần khác */
+    /* ========================================================= */
+    /* 1. ẨN CÁC THÀNH PHẦN THỪA (HỖ TRỢ CHO JS)                 */
+    /* ========================================================= */
+    header {visibility: hidden !important; display: none !important;}
     footer {display: none !important;}
     #MainMenu {display: none !important;}
     div[data-testid="stToolbar"] {display: none !important;}
     div[class*="viewerBadge"] {display: none !important;} 
 
-    /* Đẩy toàn bộ nội dung chính lên trên cùng và nổi lên trên header */
+    /* ========================================================= */
+    /* 2. CĂN CHỈNH BỐ CỤC (FIX LỖI LỆCH MÁY TÍNH)               */
+    /* ========================================================= */
+    
+    /* Thiết lập lề chuẩn, bỏ qua margin âm để tránh lỗi hiển thị trên PC */
     .block-container {
-        padding-top: 10px !important; /* Chỉ cách mép trên 10px */
-        margin-top: 0px !important;
-        z-index: 9999 !important; /* Nổi lên trên cùng */
-        position: relative !important;
+        padding-top: 1rem !important;
+        padding-bottom: 2rem !important;
+        padding-left: 2rem !important;
+        padding-right: 2rem !important;
         max-width: 750px;
     }
 
-    /* ================================================================= */
-    /* 2. GIAO DIỆN HOÀNG GIA (IMPERIAL STYLE)                           */
-    /* ================================================================= */
-    
     /* Nền Giấy Dó */
     .stApp {
         background-color: #fcf6e3;
@@ -106,32 +107,41 @@ custom_style = """
         border: 5px double #8B0000;
         border-radius: 15px;
         background-color: #ffffff;
-        box-shadow: 0 10px 30px rgba(61, 12, 2, 0.4);
+        box-shadow: 0 15px 40px rgba(61, 12, 2, 0.4);
+        margin-top: 20px;
     }
 
-    /* --- RESPONSIVE: ĐIỆN THOẠI (QUAN TRỌNG) --- */
+    /* --- RESPONSIVE: TỰ ĐỘNG ĐIỀU CHỈNH KHI VÀO ĐIỆN THOẠI --- */
     @media (max-width: 640px) {
         .block-container {
-            padding: 15px !important; 
-            margin-top: 0px !important;
+            padding: 15px !important; /* Lề nhỏ hơn cho điện thoại */
+            margin-top: 0px !important; /* Sát lên trên */
             width: 100% !important;
-            border-width: 3px !important;
+            border-width: 3px !important; /* Viền thanh thoát hơn */
         }
         
-        /* FIX LỖI CHỮ KHÔNG XUỐNG DÒNG */
-        h1, h2, h3, h4, h5 {
-            white-space: normal !important; /* Cho phép xuống dòng */
-            overflow-wrap: break-word !important; /* Ngắt từ nếu quá dài */
-            text-align: center !important;
-            line-height: 1.4 !important;
-        }
+        /* Chữ tiêu đề nhỏ lại xíu cho vừa màn hình */
+        h1 { font-size: 2rem !important; }
         
-        /* Input to ra cho dễ bấm */
+        /* Ẩn trang trí màu sắc */
+        div[data-testid="stDecoration"] { display: none !important; }
+        
+        /* Input to ra cho dễ bấm bằng ngón tay */
         .stTextInput>div>div>input {
+            font-size: 22px !important;
+            height: 55px !important;
+        }
+        
+        /* Nút bấm to ra */
+        .stButton>button {
+            height: 4em !important;
             font-size: 20px !important;
-            height: 50px !important;
         }
     }
+
+    /* ========================================================= */
+    /* 3. CHI TIẾT GIAO DIỆN HOÀNG GIA                           */
+    /* ========================================================= */
 
     /* Font chữ */
     h1, h2, h3, h4 {
@@ -175,17 +185,15 @@ custom_style = """
     }
     .id-prompt-text-main {
         color: #FFD700 !important;
-        font-size: 1.5rem;
+        font-size: 1.6rem;
         font-weight: bold;
         text-shadow: 2px 2px 4px #000;
         margin-bottom: 5px;
-        white-space: normal !important; /* Cho phép xuống dòng */
     }
     .id-prompt-text-sub {
         color: #fff8e1 !important;
-        font-size: 0.9rem;
+        font-size: 1rem;
         opacity: 0.9;
-        white-space: normal !important;
     }
 
     /* Input ID */
@@ -201,12 +209,11 @@ custom_style = """
     /* Nút Bấm */
     .stButton>button {
         width: 100%; border-radius: 8px; height: 4.5em; 
-        font-weight: bold; font-size: 20px; 
+        font-weight: bold; font-size: 22px; 
         border: 2px solid #D4AF37;
         background: linear-gradient(180deg, #b22222 0%, #800000 100%);
         color: #FFD700;
         box-shadow: 0 5px 0 #4a0000;
-        white-space: normal !important; /* Cho phép chữ trong nút xuống dòng */
     }
     .stButton>button:hover {
         background: #c92a2a; transform: translateY(3px); box-shadow: 0 2px 0 #4a0000; color: #fff;
@@ -221,6 +228,7 @@ custom_style = """
         width: 100%;
         box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
     }
+    /* Đảm bảo canvas luôn vừa vặn */
     div[data-testid="stCanvas"] canvas { 
         width: 100% !important; 
         max-width: 100% !important;
@@ -235,12 +243,13 @@ custom_style = """
         padding: 30px; background: #fff; border: 4px solid #b22222; border-radius: 15px;
         text-align: center; color: #b22222; font-size: 1.3rem; font-weight: bold;
         box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-        width: 85%;
+        width: 90%;
+        max-width: 400px;
     }
     .success-container {
         position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 99999;
         padding: 30px; background: #fffdf0; border: 5px double #28a745; border-radius: 15px;
-        text-align: center; width: 85%; box-shadow: 0 0 50px rgba(255,215,0,0.5);
+        text-align: center; width: 90%; max-width: 350px; box-shadow: 0 0 50px rgba(255,215,0,0.5);
     }
     .success-text { color: #28a745 !important; font-size: 1.4rem; font-weight: bold; }
     </style>
@@ -322,12 +331,12 @@ def main():
     query_params = st.query_params
     student_id = query_params.get("id", "")
 
-    # HEADER (Đã fix lỗi không xuống dòng)
+    # HEADER
     st.markdown("""
-        <h1 style='text-align: center; margin-bottom: 5px; font-size: 2.2rem;'>
+        <h1 style='text-align: center; margin-bottom: 5px; font-size: 2.5rem; text-shadow: 2px 2px 0 #fff; color: #8B0000;'>
             📜 德育護理健康學院
         </h1>
-        <h4 style='text-align: center; color: #5d4037; font-weight: bold; margin-top: 0;'>
+        <h4 style='text-align: center; color: #5d4037; font-weight: bold; letter-spacing: 2px; margin-top: 0;'>
             線上簽署系統 | DIGITAL SIGNATURE SYSTEM
         </h4>
     """, unsafe_allow_html=True)
@@ -375,11 +384,12 @@ def main():
                 welcome_text = f"👋 {wel_zh} {wel_local} <b>{st_data['中文姓名']}</b>"
             
             st.markdown(f"""
-            <div style="text-align: center; padding: 15px; border-radius: 10px; background-color: #fffdf0; border: 3px double #D4AF37; color: #8B0000; font-size: 1.2rem; margin-bottom: 20px;">
+            <div style="text-align: center; padding: 20px; border-radius: 10px; background-color: #fffdf0; border: 3px double #D4AF37; color: #8B0000; font-size: 1.3rem; margin-bottom: 20px;">
                 {welcome_text}
             </div>
             """, unsafe_allow_html=True)
 
+            # Dropdown Label nổi bật
             st.markdown(f"<div style='font-weight: bold; color: #8B0000; margin-bottom: 5px; font-size: 1.1rem;'>👇 {get_ui('select_doc_label')}</div>", unsafe_allow_html=True)
             
             doc_keys = list(config.DOCUMENTS.keys())
@@ -407,9 +417,9 @@ def main():
                 current_doc = config.DOCUMENTS[selected_doc_key]
 
                 st.markdown(f"""
-                <div style="background-color: #fffdf0; border-top: 3px solid #8B0000; border-bottom: 3px solid #8B0000; padding: 15px; margin-top: 20px; text-align: center;">
+                <div style="background-color: #fffdf0; border-top: 3px solid #8B0000; border-bottom: 3px solid #8B0000; padding: 20px; margin-top: 20px; text-align: center;">
                     <h3 style="margin:0; color: #b22222; text-shadow: 1px 1px 0 #fff;">{current_doc['header_title']['zh']}</h3>
-                    {'<h5 style="margin:5px 0 0 0; color: #555;">' + current_doc['header_title'][lang_code] + '</h5>' if lang_code != 'zh' else ''}
+                    {'<h5 style="margin:8px 0 0 0; color: #555;">' + current_doc['header_title'][lang_code] + '</h5>' if lang_code != 'zh' else ''}
                 </div>
                 """, unsafe_allow_html=True)
                 
@@ -423,7 +433,7 @@ def main():
 
                 st.write("")
                 st.subheader(f"📜 {get_ui('content_title')}")
-                content_style = "text-align: justify; font-size: 1.1rem; padding: 20px; border: 1px solid #d4af37; border-radius: 5px; margin-bottom: 10px; background-color: #fff; font-family: 'Times New Roman', serif; line-height: 1.5;"
+                content_style = "text-align: justify; font-size: 1.15rem; padding: 25px; border: 1px solid #d4af37; border-radius: 5px; margin-bottom: 10px; background-color: #fff; font-family: 'Times New Roman', serif; line-height: 1.6;"
                 st.markdown(f"<div style='{content_style}'>{current_doc['body_intro']['zh']}</div>", unsafe_allow_html=True)
                 if lang_code != 'zh':
                     st.markdown(f"<div style='{content_style} font-style: italic; opacity: 0.95; margin-top: -5px;'>{current_doc['body_intro'][lang_code]}</div>", unsafe_allow_html=True)
@@ -447,7 +457,7 @@ def main():
                 mobile_hint = f"{config.UI_LABELS['mobile_hint']['zh']}<br>{config.UI_LABELS['mobile_hint'][lang_code]}"
                 st.markdown(f"<div style='color: #b22222; font-size: 1rem; font-weight: bold; background: #fff5f5; padding: 10px; border: 1px dashed #b22222; text-align: center; margin-bottom: 10px;'>⚠️ {mobile_hint}</div>", unsafe_allow_html=True)
 
-                # --- CANVAS KÝ TÊN ---
+                # --- CANVAS KÝ TÊN (CĂN GIỮA & RESPONSIVE) ---
                 st.markdown('<div class="signature-container">', unsafe_allow_html=True)
                 canvas_result = st_canvas(
                     stroke_width=3, 
@@ -525,3 +535,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
