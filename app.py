@@ -10,14 +10,14 @@ import time
 import sys
 import streamlit.components.v1 as components
 
-# 1. Cấu hình trang - Ẩn Sidebar ngay từ đầu
-st.set_page_config(page_title="Digital Signature System", page_icon="📜", layout="centered", initial_sidebar_state="collapsed")
+# 1. Cấu hình trang
+st.set_page_config(page_title="Digital Signature System", page_icon="📜", layout="centered")
 
-# --- JAVASCRIPT HACK (FIX MÀU DROPDOWN & XÓA HEADER BẰNG JS) ---
+# --- JAVASCRIPT HACK (FIX MÀU & XÓA LOGO CẤP TỐC) ---
 js_hack = """
 <script>
-function fixSelectBox() {
-    // 1. Fix màu Dropdown
+function fixInterface() {
+    // 1. Fix màu Dropdown (Như cũ)
     const targets = window.parent.document.querySelectorAll('div[data-baseweb="select"]');
     targets.forEach(function(target) {
         const box = target.querySelector('div');
@@ -37,7 +37,6 @@ function fixSelectBox() {
         });
     });
 
-    // 2. Fix màu Menu xổ xuống
     const popovers = window.parent.document.querySelectorAll('div[data-baseweb="popover"]');
     popovers.forEach(function(pop) {
         pop.style.setProperty('background-color', '#fffdf0', 'important');
@@ -50,69 +49,93 @@ function fixSelectBox() {
         });
     });
 
-    // 3. XÓA SỔ HEADER & FOOTER (MẠNH TAY)
-    const header = document.querySelector('header');
-    if (header) { header.style.display = 'none'; header.style.height = '0'; }
-    const footer = document.querySelector('footer');
-    if (footer) { footer.style.display = 'none'; }
-    const toolbar = document.querySelector('div[data-testid="stToolbar"]');
+    // 2. SÁT THỦ ẨN HEADER/FOOTER (Javascript can thiệp trực tiếp)
+    // Ẩn Header chứa Avatar
+    const header = window.parent.document.querySelector('header');
+    if (header) { header.style.display = 'none'; }
+    
+    // Ẩn nút 3 gạch
+    const toolbar = window.parent.document.querySelector('.stAppToolbar');
     if (toolbar) { toolbar.style.display = 'none'; }
+
+    // Ẩn Footer và cái nút đỏ "Hosted with Streamlit"
+    const footer = window.parent.document.querySelector('footer');
+    if (footer) { footer.style.display = 'none'; }
+    
+    // Tìm các element chứa chữ "Hosted with Streamlit" để ẩn
+    const viewerBadges = window.parent.document.querySelectorAll('[class*="viewerBadge"]');
+    viewerBadges.forEach(el => el.style.display = 'none');
 }
-setInterval(fixSelectBox, 50);
+// Chạy liên tục để đảm bảo nó luôn bị ẩn
+setInterval(fixInterface, 50);
 </script>
 """
 components.html(js_hack, height=0, width=0)
 
-# --- CSS TÙY CHỈNH: GIAO DIỆN HOÀNG GIA & FIX MOBILE ---
+# --- CSS TÙY CHỈNH: GIAO DIỆN HOÀNG GIA & MOBILE FIX ---
 custom_style = """
     <style>
     /* ================================================================= */
-    /* 1. KHU VỰC ẨN THANH CÔNG CỤ (FIX CHO MOBILE & PC) */
+    /* 1. KHU VỰC CẤM ĐỊA: ẨN HẾT LOGO/AVATAR/HEADER (MẠNH NHẤT) */
     /* ================================================================= */
     
-    /* Ẩn Header, Footer, Toolbar, Menu */
-    header {visibility: hidden !important; height: 0px !important; display: none !important;}
-    footer {display: none !important;}
-    #MainMenu {display: none !important;}
-    div[data-testid="stToolbar"] {display: none !important;}
-    div[data-testid="stDecoration"] {display: none !important;}
-    div[data-testid="stStatusWidget"] {display: none !important;}
-    div[class*="viewerBadge"] {display: none !important;} /* Ẩn nút đỏ góc dưới */
-
-    /* KỸ THUẬT KÉO NGƯỢC LỀ (QUAN TRỌNG CHO MOBILE) */
-    /* Kéo toàn bộ nội dung lên trên cùng, đè mất thanh header của điện thoại */
-    .stApp > header {
+    /* Ẩn Header (Thanh trên cùng) */
+    header[data-testid="stHeader"] {
+        display: none !important;
+        visibility: hidden !important;
+        height: 0 !important;
+    }
+    
+    /* Ẩn Toolbar (Avatar + Nút 3 chấm) */
+    div[data-testid="stToolbar"] {
+        display: none !important;
+        visibility: hidden !important;
+    }
+    
+    /* Ẩn Footer mặc định */
+    footer {
         display: none !important;
     }
     
-    /* Chỉnh padding cho khung chính */
-    .block-container {
-        padding-top: 0px !important;
-        margin-top: -60px !important; /* PC: Kéo lên 60px */
+    /* Ẩn nút đỏ "Hosted with Streamlit" (Đây là class ẩn của nó) */
+    .viewerBadge_container__1QSob {
+        display: none !important;
+        visibility: hidden !important;
     }
-    
-    /* --- XỬ LÝ RIÊNG CHO MÀN HÌNH ĐIỆN THOẠI (MOBILE) --- */
+    div[class*="viewerBadge"] {
+        display: none !important;
+    }
+
+    /* Kéo nội dung lên trên cùng để lấp khoảng trống của Header */
+    .block-container {
+        padding-top: 1rem !important;
+        margin-top: -60px !important; /* Kéo ngược lên trên */
+    }
+
+    /* --- TỐI ƯU RIÊNG CHO ĐIỆN THOẠI (MOBILE RESPONSIVE) --- */
     @media (max-width: 640px) {
+        /* Kéo mạnh hơn trên điện thoại để che triệt để */
         .block-container {
-            padding: 10px !important; /* Lề nhỏ lại để rộng chỗ */
-            padding-top: 0px !important;
-            margin-top: -80px !important; /* Mobile: Kéo mạnh hơn để che Header */
+            margin-top: -80px !important; 
+            padding: 15px !important; /* Lề nhỏ lại để nội dung rộng ra */
             max-width: 100% !important;
         }
-        /* Ẩn nút 3 gạch (Hamburger) và Avatar trên mobile */
-        button[kind="header"] { display: none !important; }
-        div[data-testid="stHeader"] { display: none !important; height: 0 !important; }
         
-        /* Chỉnh Input nhập số to ra cho dễ bấm trên điện thoại */
-        .stTextInput>div>div>input {
-            font-size: 22px !important;
-            height: 50px !important;
+        /* Ẩn thanh trang trí màu sắc */
+        div[data-testid="stDecoration"] {
+            display: none !important;
         }
         
-        /* Chỉnh nút bấm to ra */
-        .stButton>button {
-            height: 3.5em !important;
-            font-size: 20px !important;
+        /* Phóng to ô nhập liệu cho dễ bấm */
+        .stTextInput>div>div>input {
+            font-size: 24px !important;
+            height: 55px !important;
+        }
+        
+        /* Canvas ký tên tự co giãn 100% chiều ngang */
+        div[data-testid="stCanvas"] canvas {
+            width: 100% !important;
+            max-width: 100% !important;
         }
     }
 
@@ -129,10 +152,11 @@ custom_style = """
     /* Khung chính giữa */
     div.block-container {
         border: 5px double #8B0000;
-        padding: 25px;
+        padding: 30px;
         border-radius: 15px;
         background-color: #ffffff;
         box-shadow: 0 10px 30px rgba(61, 12, 2, 0.4);
+        max-width: 750px;
     }
 
     /* Font chữ */
@@ -211,7 +235,7 @@ custom_style = """
         background: #c92a2a; transform: translateY(3px); box-shadow: 0 2px 0 #4a0000; color: #fff;
     }
 
-    /* Khung Canvas Ký Tên (Responsive: Tự co giãn theo màn hình) */
+    /* Khung Canvas Ký Tên (Responsive) */
     .signature-container {
         border: 3px double #b22222;
         background-color: #fff; padding: 5px;
@@ -220,10 +244,8 @@ custom_style = """
         width: 100%;
         box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
     }
-    /* Dòng này bắt buộc Canvas phải co lại cho vừa khung điện thoại */
     div[data-testid="stCanvas"] canvas { 
         width: 100% !important; 
-        max-width: 100% !important;
     }
     div[data-testid="stCanvas"] {
         width: 100% !important;
@@ -235,7 +257,7 @@ custom_style = """
         padding: 30px; background: #fff; border: 4px solid #b22222; border-radius: 15px;
         text-align: center; color: #b22222; font-size: 1.3rem; font-weight: bold;
         box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-        width: 90%; /* Để không bị tràn màn hình điện thoại */
+        width: 90%;
     }
     .success-container {
         position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 99999;
