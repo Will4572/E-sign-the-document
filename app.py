@@ -13,11 +13,11 @@ import streamlit.components.v1 as components
 # 1. Cấu hình trang
 st.set_page_config(page_title="Digital Signature System", page_icon="📜", layout="centered")
 
-# --- JAVASCRIPT HACK (FIX MÀU & XÓA LOGO CẤP TỐC) ---
+# --- JAVASCRIPT HACK: FIX MÀU & XÓA GIAO DIỆN THỪA ---
 js_hack = """
 <script>
 function fixInterface() {
-    // 1. Fix màu Dropdown (Như cũ)
+    // 1. Fix màu Dropdown (Vàng kem)
     const targets = window.parent.document.querySelectorAll('div[data-baseweb="select"]');
     targets.forEach(function(target) {
         const box = target.querySelector('div');
@@ -37,6 +37,7 @@ function fixInterface() {
         });
     });
 
+    // 2. Fix màu Menu xổ xuống
     const popovers = window.parent.document.querySelectorAll('div[data-baseweb="popover"]');
     popovers.forEach(function(pop) {
         pop.style.setProperty('background-color', '#fffdf0', 'important');
@@ -49,24 +50,24 @@ function fixInterface() {
         });
     });
 
-    // 2. SÁT THỦ ẨN HEADER/FOOTER (Javascript can thiệp trực tiếp)
-    // Ẩn Header chứa Avatar
+    // 3. XÓA SẠCH HEADER & FOOTER (JAVASCRIPT CAN THIỆP TRỰC TIẾP)
+    // Tìm và ẩn Header
     const header = window.parent.document.querySelector('header');
     if (header) { header.style.display = 'none'; }
     
-    // Ẩn nút 3 gạch
-    const toolbar = window.parent.document.querySelector('.stAppToolbar');
-    if (toolbar) { toolbar.style.display = 'none'; }
-
-    // Ẩn Footer và cái nút đỏ "Hosted with Streamlit"
+    // Tìm và ẩn Footer (Cái nút đỏ Hosted with Streamlit nằm trong này)
     const footer = window.parent.document.querySelector('footer');
     if (footer) { footer.style.display = 'none'; }
     
-    // Tìm các element chứa chữ "Hosted with Streamlit" để ẩn
-    const viewerBadges = window.parent.document.querySelectorAll('[class*="viewerBadge"]');
-    viewerBadges.forEach(el => el.style.display = 'none');
+    // Ẩn thanh công cụ
+    const toolbar = window.parent.document.querySelector('.stAppToolbar');
+    if (toolbar) { toolbar.style.display = 'none'; }
+    
+    // Quét sạch các thành phần "viewerBadge" (Nút đỏ cứng đầu)
+    const badges = window.parent.document.querySelectorAll('[class*="viewerBadge"]');
+    badges.forEach(el => el.style.display = 'none');
 }
-// Chạy liên tục để đảm bảo nó luôn bị ẩn
+// Chạy liên tục để đảm bảo không hiện lại
 setInterval(fixInterface, 50);
 </script>
 """
@@ -76,88 +77,79 @@ components.html(js_hack, height=0, width=0)
 custom_style = """
     <style>
     /* ================================================================= */
-    /* 1. KHU VỰC CẤM ĐỊA: ẨN HẾT LOGO/AVATAR/HEADER (MẠNH NHẤT) */
+    /* 1. KHU VỰC CẤM ĐỊA: ẨN TUYỆT ĐỐI (QUAN TRỌNG NHẤT) */
     /* ================================================================= */
     
-    /* Ẩn Header (Thanh trên cùng) */
+    /* Ẩn Header (Avatar, Menu) */
     header[data-testid="stHeader"] {
         display: none !important;
         visibility: hidden !important;
         height: 0 !important;
     }
     
-    /* Ẩn Toolbar (Avatar + Nút 3 chấm) */
+    /* Ẩn Toolbar (Dấu 3 chấm) */
     div[data-testid="stToolbar"] {
         display: none !important;
-        visibility: hidden !important;
     }
     
-    /* Ẩn Footer mặc định */
+    /* Ẩn Footer và Nút đỏ "Hosted with Streamlit" */
     footer {
         display: none !important;
     }
-    
-    /* Ẩn nút đỏ "Hosted with Streamlit" (Đây là class ẩn của nó) */
+    div[class*="viewerBadge"] {
+        display: none !important; /* Dòng này giết chết nút đỏ */
+    }
     .viewerBadge_container__1QSob {
         display: none !important;
-        visibility: hidden !important;
-    }
-    div[class*="viewerBadge"] {
-        display: none !important;
-    }
-
-    /* Kéo nội dung lên trên cùng để lấp khoảng trống của Header */
-    .block-container {
-        padding-top: 1rem !important;
-        margin-top: -60px !important; /* Kéo ngược lên trên */
-    }
-
-    /* --- TỐI ƯU RIÊNG CHO ĐIỆN THOẠI (MOBILE RESPONSIVE) --- */
-    @media (max-width: 640px) {
-        /* Kéo mạnh hơn trên điện thoại để che triệt để */
-        .block-container {
-            margin-top: -80px !important; 
-            padding: 15px !important; /* Lề nhỏ lại để nội dung rộng ra */
-            max-width: 100% !important;
-        }
-        
-        /* Ẩn thanh trang trí màu sắc */
-        div[data-testid="stDecoration"] {
-            display: none !important;
-        }
-        
-        /* Phóng to ô nhập liệu cho dễ bấm */
-        .stTextInput>div>div>input {
-            font-size: 24px !important;
-            height: 55px !important;
-        }
-        
-        /* Canvas ký tên tự co giãn 100% chiều ngang */
-        div[data-testid="stCanvas"] canvas {
-            width: 100% !important;
-            max-width: 100% !important;
-        }
     }
 
     /* ================================================================= */
-    /* 2. GIAO DIỆN HOÀNG GIA (IMPERIAL STYLE) */
+    /* 2. CĂN CHỈNH BỐ CỤC (FIX LỖI LỆCH MÀN HÌNH) */
     /* ================================================================= */
     
+    /* Thiết lập padding chuẩn cho cả PC và Mobile (Không dùng số âm nữa) */
+    .block-container {
+        padding-top: 1rem !important; /* Cách mép trên 1 khoảng vừa đủ đẹp */
+        padding-bottom: 2rem !important;
+        max-width: 700px;
+    }
+
     /* Nền Giấy Dó */
     .stApp {
         background-color: #fcf6e3;
         background-image: url("https://www.transparenttextures.com/patterns/rice-paper-3.png");
     }
 
-    /* Khung chính giữa */
+    /* Khung Viền Hoàng Gia */
     div.block-container {
         border: 5px double #8B0000;
-        padding: 30px;
         border-radius: 15px;
         background-color: #ffffff;
         box-shadow: 0 10px 30px rgba(61, 12, 2, 0.4);
-        max-width: 750px;
+        margin-top: 10px; /* Cách mép trên một chút */
     }
+
+    /* --- TỐI ƯU RIÊNG CHO ĐIỆN THOẠI (RESPONSIVE) --- */
+    @media (max-width: 640px) {
+        .block-container {
+            padding: 15px !important; /* Thu nhỏ lề trong */
+            margin-top: 5px !important; 
+            border-width: 3px !important; /* Viền mỏng lại chút cho thanh thoát */
+        }
+        
+        /* Ẩn trang trí màu sắc */
+        div[data-testid="stDecoration"] { display: none !important; }
+        
+        /* Input to ra cho dễ bấm */
+        .stTextInput>div>div>input {
+            font-size: 22px !important;
+            height: 50px !important;
+        }
+    }
+
+    /* ================================================================= */
+    /* 3. CHI TIẾT GIAO DIỆN (FONTS, MÀU SẮC) */
+    /* ================================================================= */
 
     /* Font chữ */
     h1, h2, h3, h4 {
@@ -172,7 +164,7 @@ custom_style = """
         font-size: 1.1rem;
     }
 
-    /* Dropdown Menu (Màu vàng kem) */
+    /* Dropdown Menu */
     div[data-baseweb="popover"], div[data-baseweb="menu"], ul[role="listbox"] {
         background-color: #fffdf0 !important;
         border: 2px solid #D4AF37 !important;
@@ -212,7 +204,7 @@ custom_style = """
         opacity: 0.9;
     }
 
-    /* Ô Input ID */
+    /* Input ID */
     .stTextInput>div>div>input { 
         text-align: center; font-size: 28px; font-weight: 900; 
         color: #b22222; 
@@ -222,7 +214,7 @@ custom_style = """
         background-color: #fffdf0;
     }
 
-    /* Nút Bấm (Ấn Triện) */
+    /* Nút Bấm */
     .stButton>button {
         width: 100%; border-radius: 8px; height: 4.5em; 
         font-weight: bold; font-size: 22px; 
@@ -235,7 +227,7 @@ custom_style = """
         background: #c92a2a; transform: translateY(3px); box-shadow: 0 2px 0 #4a0000; color: #fff;
     }
 
-    /* Khung Canvas Ký Tên (Responsive) */
+    /* Canvas Container */
     .signature-container {
         border: 3px double #b22222;
         background-color: #fff; padding: 5px;
@@ -244,14 +236,16 @@ custom_style = """
         width: 100%;
         box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
     }
+    /* Đảm bảo canvas luôn vừa vặn */
     div[data-testid="stCanvas"] canvas { 
         width: 100% !important; 
+        max-width: 100% !important;
     }
     div[data-testid="stCanvas"] {
         width: 100% !important;
     }
 
-    /* Popup Thông báo */
+    /* Notifications */
     .notify-error {
         position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 99999;
         padding: 30px; background: #fff; border: 4px solid #b22222; border-radius: 15px;
@@ -470,7 +464,7 @@ def main():
                 mobile_hint = f"{config.UI_LABELS['mobile_hint']['zh']}<br>{config.UI_LABELS['mobile_hint'][lang_code]}"
                 st.markdown(f"<div style='color: #b22222; font-size: 1rem; font-weight: bold; background: #fff5f5; padding: 10px; border: 1px dashed #b22222; text-align: center; margin-bottom: 10px;'>⚠️ {mobile_hint}</div>", unsafe_allow_html=True)
 
-                # --- CANVAS KÝ TÊN (CĂN GIỮA & RESPONSIVE) ---
+                # --- CANVAS KÝ TÊN (CĂN GIỮA) ---
                 st.markdown('<div class="signature-container">', unsafe_allow_html=True)
                 canvas_result = st_canvas(
                     stroke_width=3, 
