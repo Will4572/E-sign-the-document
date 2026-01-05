@@ -11,28 +11,38 @@ import sys
 import streamlit.components.v1 as components
 
 # 1. Cấu hình trang
-st.set_page_config(page_title="Digital Signature System", page_icon="📜", layout="centered")
+st.set_page_config(page_title="Digital Signature System", page_icon="📜", layout="centered", initial_sidebar_state="collapsed")
 
-# --- JAVASCRIPT: "SÁT THỦ" DIỆT LOGO & AVATAR (MẠNH NHẤT) ---
+# --- JAVASCRIPT: CỖ MÁY QUÉT VÀ XÓA GIAO DIỆN THỪA (MẠNH NHẤT) ---
 js_hack = """
 <script>
-function killElements() {
-    // 1. GIẾT HEADER & AVATAR
-    const header = window.parent.document.querySelector('header');
-    if (header) { header.remove(); } // Lệnh remove() xóa vĩnh viễn khỏi trang web
+function nuclearWipe() {
+    // --- 1. XÓA HEADER (AVATAR + MENU) ---
+    // Tìm tất cả các thẻ header
+    const headers = window.parent.document.querySelectorAll('header');
+    headers.forEach(h => {
+        h.style.display = 'none'; 
+        h.remove(); // Xóa vĩnh viễn khỏi HTML
+    });
 
-    // 2. GIẾT FOOTER & LOGO ĐỎ
-    const footer = window.parent.document.querySelector('footer');
-    if (footer) { footer.remove(); }
+    // --- 2. XÓA FOOTER & LOGO ĐỎ (Hosted with Streamlit) ---
+    const footers = window.parent.document.querySelectorAll('footer');
+    footers.forEach(f => f.remove());
     
+    // Tìm chính xác class của nút đỏ và xóa
     const badges = window.parent.document.querySelectorAll('[class*="viewerBadge"]');
-    badges.forEach(el => el.remove()); // Xóa sạch nút đỏ
-
-    // 3. GIẾT TOOLBAR (Dấu 3 chấm)
-    const toolbar = window.parent.document.querySelector('.stAppToolbar');
-    if (toolbar) { toolbar.remove(); }
+    badges.forEach(b => b.remove());
     
-    // 4. FIX MÀU DROPDOWN (Giữ nguyên)
+    const decoration = window.parent.document.querySelectorAll('[data-testid="stDecoration"]');
+    decoration.forEach(d => d.remove());
+
+    // --- 3. XÓA TOOLBAR (Dấu 3 chấm) ---
+    const toolbars = window.parent.document.querySelectorAll('.stAppToolbar');
+    toolbars.forEach(t => t.remove());
+    const androidToolbar = window.parent.document.querySelectorAll('[data-testid="stToolbar"]');
+    androidToolbar.forEach(t => t.remove());
+
+    // --- 4. FIX MÀU DROPDOWN (VÀNG KEM) ---
     const targets = window.parent.document.querySelectorAll('div[data-baseweb="select"]');
     targets.forEach(function(target) {
         const box = target.querySelector('div');
@@ -51,7 +61,7 @@ function killElements() {
             svg.style.setProperty('fill', '#b22222', 'important');
         });
     });
-    
+
     // Fix Menu xổ xuống
     const popovers = window.parent.document.querySelectorAll('div[data-baseweb="popover"]');
     popovers.forEach(function(pop) {
@@ -65,44 +75,39 @@ function killElements() {
         });
     });
 }
-// Chạy liên tục mỗi 50ms để đảm bảo logo không bao giờ kịp hiện ra
-setInterval(killElements, 50);
+// Chạy liên tục mỗi 10ms (Siêu nhanh) để đảm bảo không gì có thể hiện lên được
+setInterval(nuclearWipe, 10);
 </script>
 """
 components.html(js_hack, height=0, width=0)
 
-# --- CSS TÙY CHỈNH: CÂN ĐỐI MÁY TÍNH & ĐIỆN THOẠI ---
+# --- CSS TÙY CHỈNH: GIAO DIỆN HOÀNG GIA & BỐ CỤC ---
 custom_style = """
     <style>
-    /* ========================================================= */
-    /* 1. ẨN CÁC THÀNH PHẦN THỪA (HỖ TRỢ CHO JS)                 */
-    /* ========================================================= */
-    header {visibility: hidden !important; display: none !important;}
-    footer {display: none !important;}
-    #MainMenu {display: none !important;}
-    div[data-testid="stToolbar"] {display: none !important;}
-    div[class*="viewerBadge"] {display: none !important;} 
+    /* ẨN TOÀN BỘ CÁC THÀNH PHẦN MẶC ĐỊNH (Lớp bảo vệ thứ 2 sau JS) */
+    header, footer, #MainMenu, div[data-testid="stToolbar"], div[class*="viewerBadge"] {
+        visibility: hidden !important;
+        display: none !important;
+        height: 0 !important;
+        width: 0 !important;
+        opacity: 0 !important;
+        overflow: hidden !important;
+        z-index: -9999 !important;
+    }
 
-    /* ========================================================= */
-    /* 2. CĂN CHỈNH BỐ CỤC (FIX LỖI LỆCH MÁY TÍNH)               */
-    /* ========================================================= */
-    
-    /* Thiết lập lề chuẩn, bỏ qua margin âm để tránh lỗi hiển thị trên PC */
+    /* Thiết lập bố cục chuẩn (Không dùng margin âm nữa để tránh lỗi PC) */
     .block-container {
         padding-top: 1rem !important;
         padding-bottom: 2rem !important;
-        padding-left: 2rem !important;
-        padding-right: 2rem !important;
         max-width: 750px;
     }
 
-    /* Nền Giấy Dó */
+    /* --- GIAO DIỆN HOÀNG GIA --- */
     .stApp {
         background-color: #fcf6e3;
         background-image: url("https://www.transparenttextures.com/patterns/rice-paper-3.png");
     }
 
-    /* Khung Viền Hoàng Gia */
     div.block-container {
         border: 5px double #8B0000;
         border-radius: 15px;
@@ -111,39 +116,31 @@ custom_style = """
         margin-top: 20px;
     }
 
-    /* --- RESPONSIVE: TỰ ĐỘNG ĐIỀU CHỈNH KHI VÀO ĐIỆN THOẠI --- */
+    /* --- RESPONSIVE: ĐIỆN THOẠI --- */
     @media (max-width: 640px) {
         .block-container {
-            padding: 15px !important; /* Lề nhỏ hơn cho điện thoại */
-            margin-top: 0px !important; /* Sát lên trên */
+            padding: 15px !important; 
+            margin-top: 5px !important;
             width: 100% !important;
-            border-width: 3px !important; /* Viền thanh thoát hơn */
+            border-width: 3px !important;
         }
         
-        /* Chữ tiêu đề nhỏ lại xíu cho vừa màn hình */
-        h1 { font-size: 2rem !important; }
-        
-        /* Ẩn trang trí màu sắc */
+        /* Ẩn trang trí */
         div[data-testid="stDecoration"] { display: none !important; }
         
-        /* Input to ra cho dễ bấm bằng ngón tay */
+        /* Input to ra */
         .stTextInput>div>div>input {
-            font-size: 22px !important;
+            font-size: 24px !important;
             height: 55px !important;
         }
         
-        /* Nút bấm to ra */
-        .stButton>button {
-            height: 4em !important;
-            font-size: 20px !important;
+        /* Canvas full width */
+        div[data-testid="stCanvas"] canvas {
+            width: 100% !important;
         }
     }
 
-    /* ========================================================= */
-    /* 3. CHI TIẾT GIAO DIỆN HOÀNG GIA                           */
-    /* ========================================================= */
-
-    /* Font chữ */
+    /* --- TYPOGRAPHY & ELEMENTS --- */
     h1, h2, h3, h4 {
         font-family: 'Times New Roman', serif !important;
         color: #8B0000 !important;
@@ -156,7 +153,7 @@ custom_style = """
         font-size: 1.1rem;
     }
 
-    /* Dropdown Menu */
+    /* Dropdown */
     div[data-baseweb="popover"], div[data-baseweb="menu"], ul[role="listbox"] {
         background-color: #fffdf0 !important;
         border: 2px solid #D4AF37 !important;
@@ -172,7 +169,7 @@ custom_style = """
         color: #FFD700 !important;
     }
 
-    /* Khung nhập ID */
+    /* ID Prompt */
     .id-prompt-container {
         text-align: center;
         background: linear-gradient(180deg, #8B0000 0%, #5c0000 100%);
@@ -206,7 +203,7 @@ custom_style = """
         background-color: #fffdf0;
     }
 
-    /* Nút Bấm */
+    /* Button */
     .stButton>button {
         width: 100%; border-radius: 8px; height: 4.5em; 
         font-weight: bold; font-size: 22px; 
@@ -219,7 +216,7 @@ custom_style = """
         background: #c92a2a; transform: translateY(3px); box-shadow: 0 2px 0 #4a0000; color: #fff;
     }
 
-    /* Canvas Container */
+    /* Canvas */
     .signature-container {
         border: 3px double #b22222;
         background-color: #fff; padding: 5px;
@@ -228,10 +225,8 @@ custom_style = """
         width: 100%;
         box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
     }
-    /* Đảm bảo canvas luôn vừa vặn */
     div[data-testid="stCanvas"] canvas { 
         width: 100% !important; 
-        max-width: 100% !important;
     }
     div[data-testid="stCanvas"] {
         width: 100% !important;
@@ -244,12 +239,11 @@ custom_style = """
         text-align: center; color: #b22222; font-size: 1.3rem; font-weight: bold;
         box-shadow: 0 20px 50px rgba(0,0,0,0.5);
         width: 90%;
-        max-width: 400px;
     }
     .success-container {
         position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 99999;
         padding: 30px; background: #fffdf0; border: 5px double #28a745; border-radius: 15px;
-        text-align: center; width: 90%; max-width: 350px; box-shadow: 0 0 50px rgba(255,215,0,0.5);
+        text-align: center; width: 320px; box-shadow: 0 0 50px rgba(255,215,0,0.5);
     }
     .success-text { color: #28a745 !important; font-size: 1.4rem; font-weight: bold; }
     </style>
